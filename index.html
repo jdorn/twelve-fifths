@@ -1,0 +1,2735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Why Music Sounds Like Music</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0c0e16;
+    --bg-2: #141826;
+    --bg-3: #1c2236;
+    --text: #f0e9d2;
+    --text-dim: #a8a294;
+    --text-faint: #6b6759;
+    --gold: #e6b450;
+    --gold-soft: #c89c4a;
+    --teal: #7ec4cf;
+    --purple: #b48ead;
+    --rose: #e88c8c;
+    --green: #a3be8c;
+    --line: #2a2f44;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+    font-size: 19px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  body {
+    background:
+      radial-gradient(ellipse at 20% 0%, rgba(180,142,173,0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 50%, rgba(126,196,207,0.06) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 100%, rgba(230,180,80,0.05) 0%, transparent 50%),
+      var(--bg);
+    background-attachment: fixed;
+  }
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--purple), var(--gold), var(--teal));
+    width: 0%;
+    z-index: 1000;
+    transition: width 0.1s linear;
+  }
+  .stop-all {
+    position: fixed;
+    top: 18px;
+    right: 18px;
+    z-index: 999;
+    background: rgba(232, 140, 140, 0.12);
+    color: var(--rose);
+    border: 1px solid rgba(232, 140, 140, 0.4);
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    opacity: 0;
+    transform: translateY(-8px);
+    pointer-events: none;
+    transition: opacity 0.25s, transform 0.25s, background 0.2s;
+  }
+  .stop-all.visible {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+  .stop-all:hover {
+    background: rgba(232, 140, 140, 0.22);
+  }
+  .stop-all .dot {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    background: var(--rose);
+    border-radius: 50%;
+    margin-right: 6px;
+    animation: pulse 1.2s ease-in-out infinite;
+    vertical-align: middle;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.7); }
+  }
+
+  main {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 0 24px 120px;
+  }
+  section {
+    padding: 80px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  section:last-of-type { border-bottom: none; }
+
+  /* Hero */
+  .hero {
+    min-height: 92vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 60px 0;
+    border-bottom: 1px solid var(--line);
+    position: relative;
+  }
+  .hero .eyebrow {
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 30px;
+    opacity: 0.85;
+  }
+  .hero h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+    font-style: italic;
+    font-size: clamp(48px, 8vw, 84px);
+    line-height: 1.05;
+    margin: 0 0 30px;
+    background: linear-gradient(180deg, var(--text) 0%, var(--gold) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .hero p {
+    max-width: 540px;
+    font-size: 21px;
+    color: var(--text-dim);
+    margin: 0 auto 30px;
+  }
+  .hero .scroll-hint {
+    margin-top: 40px;
+    color: var(--text-faint);
+    font-size: 13px;
+    font-family: 'Inter', sans-serif;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    animation: float 2.4s ease-in-out infinite;
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(8px); }
+  }
+  .hero-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.35;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .hero > * { position: relative; z-index: 1; }
+
+  h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 600;
+    font-size: 42px;
+    line-height: 1.15;
+    margin: 0 0 14px;
+    color: var(--text);
+  }
+  h2 .num {
+    display: block;
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 14px;
+    opacity: 0.85;
+  }
+  h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 600;
+    font-size: 26px;
+    margin: 36px 0 10px;
+  }
+  p { margin: 0 0 18px; }
+  em { color: var(--text); font-style: italic; }
+  strong { color: var(--gold); font-weight: 600; }
+
+  a { color: var(--teal); text-decoration: none; border-bottom: 1px dotted; }
+  a:hover { color: var(--gold); }
+
+  .lede {
+    font-size: 22px;
+    color: var(--text);
+    font-style: italic;
+    line-height: 1.5;
+  }
+
+  .aside {
+    border-left: 2px solid var(--gold-soft);
+    padding: 12px 0 12px 20px;
+    margin: 30px 0;
+    color: var(--text-dim);
+    font-style: italic;
+    font-size: 17px;
+  }
+  .aside .label {
+    display: block;
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-style: normal;
+    margin-bottom: 4px;
+  }
+
+  /* Demo cards */
+  .demo {
+    background: linear-gradient(180deg, var(--bg-2), rgba(20,24,38,0.7));
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 24px;
+    margin: 30px 0;
+    position: relative;
+  }
+  .demo .demo-label {
+    position: absolute;
+    top: 14px;
+    right: 18px;
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+  }
+  .demo h4 {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 13px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin: 0 0 16px;
+  }
+
+  /* Buttons */
+  .btn {
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 8px 18px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--bg-3);
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.18s ease;
+    letter-spacing: 0.02em;
+  }
+  .btn:hover {
+    border-color: var(--gold);
+    background: rgba(230, 180, 80, 0.08);
+  }
+  .btn:active { transform: scale(0.97); }
+  .btn.primary {
+    background: var(--gold);
+    color: var(--bg);
+    border-color: var(--gold);
+  }
+  .btn.primary:hover {
+    background: #f0c25f;
+    border-color: #f0c25f;
+  }
+  .btn.playing {
+    background: var(--rose);
+    color: var(--bg);
+    border-color: var(--rose);
+  }
+  .btn.sm { padding: 5px 12px; font-size: 12px; }
+  .btn.icon {
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    border-radius: 50%;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .row.center { justify-content: center; }
+  .row.between { justify-content: space-between; }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 4px;
+    background: var(--line);
+    border-radius: 2px;
+    outline: none;
+    width: 100%;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--gold);
+    cursor: pointer;
+    box-shadow: 0 0 0 4px rgba(230, 180, 80, 0.15);
+    transition: box-shadow 0.15s;
+  }
+  input[type="range"]::-webkit-slider-thumb:hover {
+    box-shadow: 0 0 0 6px rgba(230, 180, 80, 0.25);
+  }
+  input[type="range"]::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--gold);
+    cursor: pointer;
+    border: none;
+  }
+
+  .mono { font-family: 'JetBrains Mono', monospace; font-size: 14px; }
+  .readout {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--gold);
+    font-size: 14px;
+  }
+
+  /* SVG demo styling */
+  svg.wave-svg, svg.demo-svg {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  /* Harmonics builder */
+  .harm-row {
+    display: grid;
+    grid-template-columns: 90px 1fr 50px;
+    gap: 14px;
+    align-items: center;
+    margin: 6px 0;
+  }
+  .harm-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+  .harm-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--gold);
+    text-align: right;
+  }
+  .preset-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .preset-row .btn { padding: 5px 12px; font-size: 12px; }
+  .preset-row .btn.active {
+    background: var(--gold);
+    color: var(--bg);
+    border-color: var(--gold);
+  }
+
+  /* Intervals grid */
+  .interval-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 10px;
+    margin-top: 14px;
+  }
+  .interval-card {
+    background: var(--bg-3);
+    border: 1px solid var(--line);
+    padding: 14px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.18s;
+    text-align: left;
+    color: var(--text);
+    font-family: inherit;
+  }
+  .interval-card:hover {
+    border-color: var(--gold);
+    transform: translateY(-2px);
+  }
+  .interval-card.playing {
+    border-color: var(--rose);
+    background: rgba(232,140,140,0.08);
+  }
+  .interval-card .name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .interval-card .ratio {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--gold);
+    font-size: 13px;
+  }
+  .interval-card .feel {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    color: var(--text-faint);
+    margin-top: 6px;
+    letter-spacing: 0.05em;
+  }
+  .interval-card.dissonant .ratio { color: var(--rose); }
+
+  /* Circle of fifths */
+  .fifths-wrap {
+    display: grid;
+    grid-template-columns: 1fr 220px;
+    gap: 24px;
+    align-items: center;
+  }
+  @media (max-width: 600px) {
+    .fifths-wrap { grid-template-columns: 1fr; }
+  }
+  .fifths-readout {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.7;
+  }
+  .fifths-readout .row-r {
+    display: flex;
+    justify-content: space-between;
+    color: var(--text-dim);
+  }
+  .fifths-readout .row-r b {
+    color: var(--gold);
+    font-weight: 500;
+  }
+
+  /* Synesthesia keyboard — fixed grid, every key same size */
+  .syn-keyboard {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: 4px;
+    margin: 20px 0 8px;
+  }
+  @media (max-width: 640px) {
+    .syn-keyboard { grid-template-columns: repeat(6, 1fr); }
+  }
+  @media (max-width: 380px) {
+    .syn-keyboard { grid-template-columns: repeat(4, 1fr); }
+  }
+  .syn-key {
+    aspect-ratio: 1 / 2;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: var(--bg-3);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 8px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    color: var(--text);
+    transition: transform 0.15s;
+    position: relative;
+    overflow: hidden;
+    user-select: none;
+  }
+  .syn-key:active { transform: scale(0.95); }
+  .syn-key .color-fill {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    opacity: 0;
+    transition: opacity 0.6s ease-out;
+    z-index: 0;
+  }
+  .syn-key.lit .color-fill { opacity: 0.85; }
+  .syn-key > span { position: relative; z-index: 1; mix-blend-mode: difference; color: white; }
+
+  /* Footer */
+  .outro {
+    text-align: center;
+    padding: 80px 0 40px;
+    color: var(--text-dim);
+    font-style: italic;
+  }
+  .outro .questions {
+    text-align: left;
+    max-width: 560px;
+    margin: 30px auto;
+    font-size: 19px;
+  }
+  .outro .questions li {
+    margin: 8px 0;
+    color: var(--text-dim);
+  }
+
+  /* Utility */
+  .center { text-align: center; }
+  .small { font-size: 14px; color: var(--text-dim); }
+  .gold { color: var(--gold); }
+  .teal { color: var(--teal); }
+  .rose { color: var(--rose); }
+  .dim { color: var(--text-dim); }
+
+  /* Key character demo */
+  .key-row {
+    display: grid;
+    grid-template-columns: 110px 1fr 100px;
+    gap: 12px;
+    align-items: center;
+    margin: 8px 0;
+  }
+  .key-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 600;
+  }
+  .key-mood {
+    font-style: italic;
+    color: var(--text-dim);
+    font-size: 16px;
+  }
+
+  /* Comparison demo */
+  .ab-compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 14px;
+  }
+  @media (max-width: 500px) {
+    .ab-compare { grid-template-columns: 1fr; }
+  }
+  .ab-side {
+    background: var(--bg-3);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+  }
+  .ab-side h5 {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin: 0 0 10px;
+    color: var(--text-dim);
+  }
+  .ab-side .freq {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--gold);
+    margin: 8px 0;
+  }
+
+  /* Drop cap */
+  section > p:first-of-type::first-letter,
+  section > .first-p::first-letter {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 64px;
+    float: left;
+    line-height: 0.85;
+    padding-right: 8px;
+    padding-top: 4px;
+    color: var(--gold);
+  }
+
+  /* Two-paths viz (Pythagorean) */
+  .two-paths-wrap {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 18px;
+  }
+  @media (max-width: 540px) {
+    .two-paths-wrap { grid-template-columns: 1fr 1fr; }
+  }
+
+  /* Temperament compare */
+  .temp-info {
+    background: var(--bg-3);
+    border-left: 2px solid var(--gold);
+    padding: 12px 16px;
+    margin: 6px 0 16px;
+    border-radius: 4px;
+    min-height: 70px;
+  }
+  .temp-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 21px;
+    font-weight: 600;
+    color: var(--gold);
+    margin-bottom: 4px;
+  }
+  .temp-desc {
+    font-size: 16px;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+  .temp-recipe {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--teal);
+    margin-top: 6px;
+  }
+
+  /* Per-temperament subsections */
+  .temperament-block {
+    padding: 36px 0 20px;
+    border-top: 1px dashed var(--line);
+    margin-top: 8px;
+  }
+  .temperament-block:first-of-type {
+    border-top: none;
+    padding-top: 12px;
+    margin-top: 24px;
+  }
+  .temperament-header {
+    margin-bottom: 18px;
+  }
+  .temperament-header h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 32px;
+    font-weight: 600;
+    margin: 0 0 6px;
+    color: var(--text);
+  }
+  .temperament-header h3 .num {
+    color: var(--gold);
+    font-style: italic;
+    font-weight: 500;
+    margin-right: 6px;
+  }
+  .temperament-era {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    opacity: 0.9;
+  }
+  .recipe-line {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--teal);
+    margin: 14px 0 4px;
+    padding: 10px 14px;
+    background: rgba(126, 196, 207, 0.06);
+    border-left: 2px solid var(--teal);
+    border-radius: 4px;
+  }
+  .recipe-line .total {
+    color: var(--text-dim);
+    float: right;
+  }
+  .pros-cons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin: 22px 0;
+    padding: 20px;
+    background: var(--bg-2);
+    border-radius: 10px;
+    border: 1px solid var(--line);
+  }
+  @media (max-width: 540px) {
+    .pros-cons { grid-template-columns: 1fr; }
+  }
+  .pros-cons h5 {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin: 0 0 10px;
+  }
+  .pros-cons .pros h5 { color: var(--green); }
+  .pros-cons .cons h5 { color: var(--rose); }
+  .pros-cons ul {
+    margin: 0;
+    padding-left: 18px;
+    font-size: 16px;
+    line-height: 1.55;
+  }
+  .pros-cons li {
+    margin: 5px 0;
+    color: var(--text-dim);
+  }
+  .chart-wrap {
+    background: linear-gradient(180deg, var(--bg-2), rgba(20,24,38,0.7));
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 20px;
+    margin: 18px 0;
+  }
+
+  /* Cents ruler */
+  .cents-ruler-wrap {
+    margin: 14px 0;
+  }
+  .cents-ruler-svg {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .tick-group { cursor: pointer; }
+  .tick-group:hover .tick-line { stroke: var(--gold) !important; stroke-width: 3 !important; }
+  .tick-group:active .tick-line { stroke: var(--rose) !important; }
+
+  /* Familiar songs */
+  .song-row {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line);
+    align-items: center;
+  }
+  .song-row:last-child { border-bottom: none; }
+  .song-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 600;
+  }
+  .song-sub {
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+  .song-btn {
+    min-width: 110px;
+  }
+  .drone-toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+  .drone-toggle input { accent-color: var(--gold); }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progress"></div>
+<button class="stop-all" id="stop-all"><span class="dot"></span>stop all sound</button>
+
+<main>
+
+<!-- ====================== HERO ====================== -->
+<section class="hero">
+  <canvas class="hero-canvas" id="hero-canvas"></canvas>
+  <div class="eyebrow">An interactive essay</div>
+  <h1>Why Music<br>Sounds Like Music</h1>
+  <p>A short tour of vibrating strings, ancient ratios, beautiful compromises, and the secret math hiding behind every song you've ever loved.</p>
+  <div class="scroll-hint">Scroll to begin ↓</div>
+</section>
+
+
+<!-- ====================== I — PITCH ====================== -->
+<section id="s1">
+  <h2><span class="num">I — Pitch</span>Music begins with a wiggle.</h2>
+
+  <p class="first-p">Pluck a guitar string and look closely. It blurs. What you can't quite see is that it's moving back and forth — pushing the air, pulling the air, pushing the air — hundreds of times per second. That pressure ripple travels outward, finds your eardrum, and your brain interprets it as a <em>note</em>.</p>
+
+  <p>The faster the wiggle, the higher the note. We measure wiggles per second in <strong>hertz</strong> (Hz), and by international agreement the A above middle C wiggles exactly 440 times every second.</p>
+
+  <p>Drag the slider below. The wave will redraw itself in real time. Press play to actually hear it.</p>
+
+  <div class="demo">
+    <span class="demo-label">demo 01</span>
+    <h4>Frequency → pitch</h4>
+    <svg class="wave-svg" id="wave-1" viewBox="0 0 600 160" preserveAspectRatio="none"></svg>
+    <div class="row between" style="margin-top: 14px;">
+      <span class="readout"><span id="freq-1">440</span> Hz</span>
+      <span class="readout dim" id="note-1">≈ A4 (concert pitch)</span>
+    </div>
+    <input type="range" id="slider-1" min="80" max="1200" value="440" style="margin-top: 12px;" />
+    <div class="row" style="margin-top: 14px;">
+      <button class="btn primary" id="play-1">▶ play</button>
+      <button class="btn sm" data-freq="220">220 Hz</button>
+      <button class="btn sm" data-freq="440">440 Hz</button>
+      <button class="btn sm" data-freq="880">880 Hz</button>
+      <span class="small dim" style="margin-left:auto;">middle C ≈ 262 Hz</span>
+    </div>
+  </div>
+
+  <p>Slide low and the wave stretches; the tone deepens and starts to feel less like music and more like a felt rumble in your chest. Slide high and the wave compresses into a thin whistle. Below about <span class="mono">20 Hz</span> you stop hearing it as pitch and start feeling it. Above <span class="mono">20,000 Hz</span> you stop hearing it altogether — your dog, however, is still listening.</p>
+
+  <div class="aside">
+    <span class="label">A small history</span>
+    Concert pitch wasn't always 440 Hz. In Mozart's day, an "A" could be anywhere from 415 to 470 depending on the city. Orchestras tuned higher and higher to sound brighter, until singers' voices started giving out. In 1939 a committee finally locked it at 440 — and people have been arguing about it ever since.
+  </div>
+</section>
+
+
+<!-- ====================== II — TIMBRE ====================== -->
+<section id="s2">
+  <h2><span class="num">II — Timbre</span>Same note, different voice.</h2>
+
+  <p>If pitch were all there was to it, a violin playing an A would be indistinguishable from a flute playing an A would be indistinguishable from your dishwasher playing an A. Obviously, that's not the world we live in.</p>
+
+  <p>Here's the trick: when a real instrument plays a note, it isn't producing a single clean wave. It's producing the fundamental frequency <em>plus a cascade of quieter, faster waves layered on top</em>. These extras are called <strong>harmonics</strong> (or overtones), and they vibrate at exact integer multiples of the fundamental: 2×, 3×, 4×, and so on.</p>
+
+  <p>Different instruments emphasize different harmonics. A flute is mostly the fundamental — almost a pure sine wave. A violin is bright with high harmonics. A clarinet, weirdly, favors only the odd ones. The cocktail of harmonics is what your ears call <em>timbre</em>.</p>
+
+  <p>Click an instrument preset to start hearing it, then drag the harmonic sliders to morph the sound in real time. The waveform rebuilds itself as you go.</p>
+
+  <div class="demo">
+    <span class="demo-label">demo 02</span>
+    <h4>Build an instrument from harmonics</h4>
+
+    <div class="preset-row" id="harm-presets">
+      <button class="btn sm" data-preset="sine">pure sine</button>
+      <button class="btn sm" data-preset="flute">flute-ish</button>
+      <button class="btn sm" data-preset="violin">violin-ish</button>
+      <button class="btn sm" data-preset="clarinet">clarinet-ish</button>
+      <button class="btn sm" data-preset="organ">organ-ish</button>
+      <button class="btn sm" data-preset="sawtooth">buzzy</button>
+    </div>
+
+    <svg class="wave-svg" id="wave-2" viewBox="0 0 600 160" preserveAspectRatio="none" style="margin-bottom: 8px;"></svg>
+
+    <div id="harm-sliders"></div>
+
+    <div class="row" style="margin-top: 18px;">
+      <button class="btn primary" id="play-2">▶ play / stop</button>
+      <span class="small dim" style="margin-left:auto;">fundamental: 220 Hz</span>
+    </div>
+  </div>
+
+  <p>The wave on screen is a portrait of a sound. The peaks and valleys aren't decorative — that exact shape is what's pressing on your eardrum thousands of times per second. Two waves with the same period but different shapes give you the same <em>note</em>, but a completely different <em>voice</em>.</p>
+
+  <div class="aside">
+    <span class="label">Worth knowing</span>
+    In the 1860s the German physicist Hermann von Helmholtz built a wall of glass spheres called "resonators" — each one rang sympathetically with a particular harmonic. By holding them up to a sounding instrument, he could literally listen to its harmonic recipe, one ingredient at a time. He had built, by hand, a Fourier transform.
+  </div>
+</section>
+
+
+<!-- ====================== III — INTERVALS ====================== -->
+<section id="s3">
+  <h2><span class="num">III — Intervals</span>When two notes meet.</h2>
+
+  <p>One note alone is a sound. Two notes together are a relationship. And the strange, beautiful fact at the heart of music — the one the Greeks went a little mad over — is that some pairs of notes sound right together and others don't, and the difference is entirely in the <em>ratio</em> of their frequencies.</p>
+
+  <p>If one note is exactly twice the frequency of another, the two sound so similar we give them the same name. That doubling is called an <strong>octave</strong>. A4 is 440 Hz; A5 is 880 Hz; A6 is 1760 Hz. The ratio is <span class="mono">2:1</span>. Sing "Some-where" from <em>Over the Rainbow</em> — that's an octave.</p>
+
+  <p>Ratios that are <em>almost</em> as simple — 3:2, 4:3, 5:4 — also sound pleasant, in descending order of simplicity. Ratios with bigger, uglier numbers sound rougher and more tense. This is not a cultural convention; it's physics. When two frequencies share a simple ratio, their waves line up periodically and the combined wave has a clean repeating shape. When they don't, the combined wave is a mess.</p>
+
+  <p>Click a preset interval to start playing, then drag the slider to slide the second note around. Listen to how the combined wave goes from clean and locked to chaotic and beating:</p>
+
+  <div class="demo">
+    <span class="demo-label">demo 03</span>
+    <h4>Two waves, one ear</h4>
+    <svg class="wave-svg" id="wave-3" viewBox="0 0 600 220" preserveAspectRatio="none"></svg>
+    <div class="row between" style="margin-top:12px;">
+      <span class="readout">Ratio ≈ <span id="ratio-3">3 : 2</span></span>
+      <span class="readout dim" id="label-3">— a perfect fifth</span>
+    </div>
+    <input type="range" id="slider-3" min="100" max="240" value="150" style="margin-top: 12px;" />
+    <div class="small dim center" style="margin-top:6px;">(low note fixed at 220 Hz; drag the slider to change the second)</div>
+    <div class="row" style="margin-top: 14px;">
+      <button class="btn primary" id="play-3">▶ play / stop</button>
+      <button class="btn sm" data-ratio="2">octave (2:1)</button>
+      <button class="btn sm" data-ratio="1.5">fifth (3:2)</button>
+      <button class="btn sm" data-ratio="1.333">fourth (4:3)</button>
+      <button class="btn sm" data-ratio="1.414">tritone</button>
+    </div>
+  </div>
+
+  <p>Notice how the combined wave at the bottom locks into a clean, repeating shape at 2:1 or 3:2 — but turns into a chaotic, beating mess if you put the ratio at, say, 1.414 (which is √2, an irrational number, and the infamous "tritone" — the interval medieval theorists once called <em>diabolus in musica</em>, the devil in music).</p>
+
+  <div class="aside">
+    <span class="label">Legend has it</span>
+    According to a charming and almost certainly false story, Pythagoras discovered ratios after walking past a blacksmith and noticing that hammers of weights in simple proportions made harmonious sounds. The math was right; the metallurgy was nonsense — hammer pitch doesn't actually work that way. But the legend stuck for 2,500 years, which is the highest compliment a legend can receive.
+  </div>
+</section>
+
+
+<!-- ====================== IV — SACRED RATIOS ====================== -->
+<section id="s4">
+  <h2><span class="num">IV — The Sacred Ratios</span>A short menu of consonance.</h2>
+
+  <p>Every interval Western music is built on can be traced back to a small handful of small whole-number ratios. Here they are. Click each to hear it — clicking another will swap to the new one.</p>
+
+  <div class="demo">
+    <span class="demo-label">demo 04</span>
+    <h4>Click an interval to hear it</h4>
+    <div class="interval-grid" id="interval-grid"></div>
+    <div class="small dim" style="margin-top:14px;">(All built above the same A at 220 Hz, in pure just intonation.)</div>
+  </div>
+
+  <p>The further down that list you go, the bigger the numbers in the ratio and the more tension your ear hears. The <em>major third</em> (5:4) feels bright and happy. Lower its top note slightly to a <em>minor third</em> (6:5) and the same chord turns suddenly sad. That little 25/24 nudge — about 6%, a difference of one semitone — is the whole emotional axis of Western music. Major and minor: one tiny ratio, two completely different feelings.</p>
+
+  <p>Stack a few of these together and you get a chord. A "major triad" is a fundamental, a major third (5:4) above it, and a perfect fifth (3:2) above that. The frequencies relate to each other as <span class="mono">4 : 5 : 6</span>. Three numbers. That's it. That's the chord that powers, depending on your taste, every pop song since 1957 or every hymn since 1607.</p>
+</section>
+
+
+<!-- ====================== V — WHY TWELVE & CENTS ====================== -->
+<section id="s5">
+  <h2><span class="num">V — Why Twelve, and What's a Cent?</span>Two pieces of vocabulary before the trouble starts.</h2>
+
+  <p>Quick pause for housekeeping. We've been talking comfortably about ratios and intervals, but two ideas have been creeping in that deserve their own moment in the spotlight.</p>
+
+  <h3>Why twelve notes?</h3>
+
+  <p>A piano has twelve keys before the pattern repeats. Your guitar has twelve frets to the octave. Western music has twelve names for notes — C, C♯, D, D♯, E, F, F♯, G, G♯, A, A♯, B — and then it starts over. Why <em>twelve</em>? Why not seven, or ten, or twenty-three?</p>
+
+  <p>The honest answer: because we got lucky. Start on any note and go up by perfect fifths (multiplying by 3/2 each time). Every fifth lands on a new pitch class. After twelve fifths you've visited twelve distinct notes, and you're almost — <em>almost</em> — back where you started. Take any fewer steps and the loop doesn't close; take any more and you start landing on near-duplicates. Twelve is the smallest number that nearly works.</p>
+
+  <p>That "nearly" will turn out to be the source of all the trouble in the next section. But twelve, give or take a fraction of a hair, is the number our system settled on. Other cultures made other choices: roughly 5 notes per octave in much of East Asian pentatonic music, 17 in Turkish theory, 22 śruti in Indian classical music, 24 in Arabic maqamat, and a theoretically wonderful 53 if you really want to be precise about it.</p>
+
+  <h3>And what's a cent?</h3>
+
+  <p>A cent is a unit of pitch designed to be human-friendly. By definition, one octave equals exactly <strong>1,200 cents</strong>. Each equal-tempered semitone — one piano key to the next — is exactly 100 cents. The smallest pitch change most people can hear is somewhere around 5–10 cents. So one cent is, in practical terms, a deviation almost too small to notice; ten cents is the audible edge; twenty cents is "that note sounds wrong."</p>
+
+  <p>Cents are logarithmic, like our hearing. A hundred cents low in the bass and a hundred cents high in the treble sound like the same step to us, even though the underlying frequency jumps are completely different. They give us a single ruler for measuring how far <em>anything</em> is from anything else, in any tuning system.</p>
+
+  <p>The ruler below shows one full octave (1200 cents) divided two ways at once. Above the line: the twelve equal-tempered semitones, each exactly 100 cents apart. Below the line: where the pure just-intonation ratios actually want to land. Click any mark to hear it.</p>
+
+  <div class="demo">
+    <span class="demo-label">demo 05</span>
+    <h4>The cents ruler — equal steps vs pure ratios</h4>
+    <div class="cents-ruler-wrap">
+      <svg class="cents-ruler-svg" id="cents-ruler" viewBox="0 0 760 220" preserveAspectRatio="xMidYMid meet"></svg>
+    </div>
+    <div class="small dim center">Top row: equal-tempered semitones, every 100¢.  Bottom row: just-intonation ratios. Notice how they don't quite line up.</div>
+  </div>
+
+  <p>This is, in compressed form, the whole problem we're about to solve. The pure ratios that nature gave us — 3:2, 5:4, 4:3, and friends — almost but don't quite land on a clean grid of 100-cent gridlines. <em>Almost</em>. That's the gap the rest of this story is about.</p>
+</section>
+
+
+<!-- ====================== VI — THE COMMA ====================== -->
+<section id="s6">
+  <h2><span class="num">VI — A Crack in the Universe</span>The ratios don't quite close.</h2>
+
+  <p>Here's where it gets weird. If perfect fifths sound this good, why not build all of music out of them?</p>
+
+  <p>Start on any note. Go up a fifth (multiply by 3/2). Go up another fifth. Keep going. To keep all those notes in the same octave — the same "neighborhood" of pitches where we can compare them as notes — we'll do a small accounting trick: whenever the running pitch climbs past one octave, we'll divide by two, dropping it back down. (Halving the frequency moves you down exactly one octave, which in our system is the "same note" again.) The pitch class stays the same; we're just keeping our notes in arm's reach.</p>
+
+  <p>After <em>twelve</em> such fifths — once we account for all the octaves we've dropped — we should arrive right back at the note we started on, seven octaves above where the raw climb would have taken us. Twelve fifths upstairs, seven octaves upstairs, two paths to the same landing.</p>
+
+  <p>They don't arrive together.</p>
+
+  <div class="demo">
+    <span class="demo-label">demo 06</span>
+    <h4>Climb the circle of fifths</h4>
+    <div class="fifths-wrap">
+      <svg class="demo-svg" id="fifths-svg" viewBox="0 0 340 340"></svg>
+      <div>
+        <div class="fifths-readout" id="fifths-readout"></div>
+        <div class="row" style="margin-top: 14px;">
+          <button class="btn primary" id="fifths-step">▶ next fifth</button>
+          <button class="btn sm" id="fifths-reset">reset</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p>Each step in the spiral is a perfect 3:2 fifth folded back into our starting octave. The 12th step should sit exactly on top of the first. It doesn't. It sits a tiny, audible distance past it. The spiral never closes.</p>
+
+  <p>Here's the same fact, shown a different way. Two ladders climbing in parallel: one in seven octaves (×2 each step), the other in twelve fifths (×3/2 each step). They <em>should</em> reach the same top rung.</p>
+
+  <div class="demo">
+    <span class="demo-label">demo 06b</span>
+    <h4>Two paths up the same staircase</h4>
+    <svg class="demo-svg" id="paths-svg" viewBox="0 0 600 360" preserveAspectRatio="xMidYMid meet"></svg>
+    <div class="small dim center" style="margin-top:8px;">Seven octaves of A starting from 27.5 Hz should land on 3520 Hz. Twelve perfect fifths from the same A land on 3548 Hz instead.</div>
+  </div>
+
+  <p>That little gap has a grand name: the <strong>Pythagorean comma</strong>, about <span class="readout gold">23.46 cents</span> — roughly a quarter of a semitone. Tiny, but very audibly wrong. The math is unforgiving: <span class="mono">(3/2)<sup>12</sup> = 129.746…</span> and <span class="mono">2<sup>7</sup> = 128</span>. Those numbers are made of different prime factors and they will never, ever be equal. You can stack pure fifths from now until the heat death of the universe and you will not land on a pure octave.</p>
+
+  <p>The comma is, in a real sense, the original sin of Western music.</p>
+
+  <div class="aside">
+    <span class="label">Mathematical aside</span>
+    The Pythagoreans had a religious commitment to the idea that everything in the cosmos could be expressed as a ratio of whole numbers. So when one of them — supposedly Hippasus — proved that the square root of 2 was <em>irrational</em>, the legend goes that the others either expelled him from the brotherhood, or drowned him at sea. The comma is a smaller scandal, but a related one: the music of the spheres, it turns out, is slightly out of tune.
+  </div>
+</section>
+
+
+<!-- ====================== VII — TEMPERAMENTS ====================== -->
+<section id="s7">
+  <h2><span class="num">VII — Two Thousand Years of Compromise</span>Six historical answers to one stubborn problem.</h2>
+
+  <p>The Pythagorean comma has been the central, low-grade scandal of Western music for about 2,500 years, and every era has invented its own way of dealing with it. Dozens of named tuning systems exist, with hundreds of small variations. What follows is a tasting flight of six of the most historically interesting — chosen because each one represents a different <em>philosophy</em> for solving the same fundamental impossibility.</p>
+
+  <p>We'll move through them in order. Each is a kind of statement of values: <em>which intervals do we love most? Which keys do we sacrifice? How much error are we willing to spread, and where?</em> Across each subsection you'll see the same diagram — a bar for every one of the twelve fifths around the circle, showing how much each one has been narrowed from a pure 3:2 to keep the math closing. The shape of the bars is the fingerprint of the tuning.</p>
+
+
+  <!-- ============= 1. Pythagorean ============= -->
+  <div class="temperament-block">
+    <div class="temperament-header">
+      <h3><span class="num">1.</span>Pythagorean tuning</h3>
+      <div class="temperament-era">~500 BC – 1500 AD · the medieval world</div>
+    </div>
+
+    <p>The oldest answer, and the simplest. Build every fifth as a pure 3:2 ratio, exactly as Pythagoras would have insisted. Eleven of the twelve fifths come out pristine. The twelfth has to absorb the entire 23.46-cent comma on its own, and it sounds like an animal in distress.</p>
+
+    <p>That ugly twelfth fifth has a name: the <strong>wolf interval</strong>. Renaissance musicians called it that because it sounded like a wolf was loose in the chapel. As long as you played in keys that avoided it, everything was fine. Stray into the wrong key, and the wolf bit you.</p>
+
+    <div class="chart-wrap">
+      <svg class="demo-svg" id="chart-pythagorean" viewBox="0 0 640 320" preserveAspectRatio="xMidYMid meet"></svg>
+      <div class="recipe-line">11 × pure  +  1 × −(Pyth. comma) <span class="total">total: −23.46¢</span></div>
+    </div>
+
+    <div class="demo">
+      <span class="demo-label">listen</span>
+      <h4>Pure fifth vs. wolf fifth</h4>
+      <div class="ab-compare">
+        <div class="ab-side">
+          <h5>A pure fifth (3:2)</h5>
+          <div class="freq">220 Hz + 330.00 Hz</div>
+          <button class="btn primary" data-pair="pure">▶ play</button>
+          <div class="small dim" style="margin-top:8px;">Locked. Effortless. Pleasant.</div>
+        </div>
+        <div class="ab-side">
+          <h5>A wolf fifth</h5>
+          <div class="freq">220 Hz + 325.55 Hz</div>
+          <button class="btn primary" data-pair="wolf">▶ play</button>
+          <div class="small dim" style="margin-top:8px;">All the error, in one place. Listen for the beating.</div>
+        </div>
+      </div>
+    </div>
+
+    <p>That slow wobble underneath the wolf fifth is the two waves <em>almost</em> agreeing and then sliding out of phase, over and over. The wobble has a name too — <em>beats</em> — and its rate is exactly the difference between the two frequencies.</p>
+
+    <div class="pros-cons">
+      <div class="pros">
+        <h5>What worked</h5>
+        <ul>
+          <li>Eleven perfectly pure fifths</li>
+          <li>Beautiful in keys that avoid the wolf</li>
+          <li>Mathematically elegant — only 3:2 ratios</li>
+        </ul>
+      </div>
+      <div class="cons">
+        <h5>What didn't</h5>
+        <ul>
+          <li>The wolf howls whenever you hit it</li>
+          <li>Major thirds are 22¢ sharp everywhere — noticeably tense</li>
+          <li>Whole keys are off-limits</li>
+        </ul>
+      </div>
+    </div>
+
+    <p>For a thousand years, composers just lived with the wolf. They wrote in keys that avoided it; whole regions of the musical map were off limits. Imagine being a painter who could only use eight colors because the other four would make customers flee.</p>
+  </div>
+
+
+  <!-- ============= 2. Meantone ============= -->
+  <div class="temperament-block">
+    <div class="temperament-header">
+      <h3><span class="num">2.</span>Quarter-comma meantone</h3>
+      <div class="temperament-era">~1500 – 1700 · Pietro Aron and the Renaissance keyboard</div>
+    </div>
+
+    <p>By the Renaissance, polyphonic vocal music had revealed something Pythagorean tuning couldn't deliver: <em>pure major thirds matter more than pure fifths</em>. A chord with a perfect 5:4 third sounds glowing and luminous; a Pythagorean third sounds clenched and bright in a wrong way. So Renaissance theorists made a striking trade — described in print by Pietro Aron in 1523 and standard for the next two centuries: <em>narrow every fifth slightly so that the major thirds come out exactly pure</em>.</p>
+
+    <p>The math is satisfying. Narrow each of eleven fifths by exactly 1/4 of a syntonic comma (about 5.4¢), and four such fifths stacked together land precisely on a pure 5:4 major third. The price: the twelfth fifth — still a wolf — becomes much <em>worse</em> than in Pythagorean. About 35.7 cents wider than pure. A genuinely vicious sound.</p>
+
+    <div class="chart-wrap">
+      <svg class="demo-svg" id="chart-meantone" viewBox="0 0 640 320" preserveAspectRatio="xMidYMid meet"></svg>
+      <div class="recipe-line">11 × −(syntonic / 4)  +  1 × wolf  <span class="total">total: −23.46¢</span></div>
+    </div>
+
+    <div class="pros-cons">
+      <div class="pros">
+        <h5>What worked</h5>
+        <ul>
+          <li>Major thirds are <em>perfectly</em> pure (5:4)</li>
+          <li>Triads in central keys sound luminous</li>
+          <li>Beloved by vocal and string ensembles</li>
+        </ul>
+      </div>
+      <div class="cons">
+        <h5>What didn't</h5>
+        <ul>
+          <li>Even worse wolf than Pythagorean (+35.7¢!)</li>
+          <li>Only ~8 keys actually usable</li>
+          <li>Modulation between keys is awkward at best, catastrophic at worst</li>
+        </ul>
+      </div>
+    </div>
+
+    <p>As 17th-century music grew more harmonically adventurous — composers wanting to modulate freely, to startle the ear, to wander into remote keys — meantone's restrictions became suffocating. Something had to change.</p>
+  </div>
+
+
+  <!-- ============= 3. Werckmeister III ============= -->
+  <div class="temperament-block">
+    <div class="temperament-header">
+      <h3><span class="num">3.</span>Werckmeister III</h3>
+      <div class="temperament-era">1691 · Andreas Werckmeister, Germany</div>
+    </div>
+
+    <p>Andreas Werckmeister, a German organist and theorist, published a small but revolutionary book in 1691 called <em>Musicalische Temperatur</em>. In it he proposed several "well-tempered" tunings — the third of which became the most famous. The big idea: <em>spread the comma across several fifths so that no fifth is unbearable, and every key is playable.</em></p>
+
+    <p>His recipe: split the Pythagorean comma into four equal quarter-pieces, and tuck them into four fifths concentrated near the central keys (C-G, G-D, D-A, and B-F♯). The other eight fifths stay perfectly pure. Total error: still 23.46¢, but no single fifth carries more than 5.9¢ of it.</p>
+
+    <div class="chart-wrap">
+      <svg class="demo-svg" id="chart-werckmeister" viewBox="0 0 640 320" preserveAspectRatio="xMidYMid meet"></svg>
+      <div class="recipe-line">4 × −(Pyth. comma / 4)  +  8 × pure  <span class="total">total: −23.46¢</span></div>
+    </div>
+
+    <p>For the first time, <em>every key was usable</em>. But each key sounded subtly different. C major, ringed by mostly pure fifths, sounded calm and clear. F♯ major, sitting in the pure-fifths region but built on stacked-up Pythagorean thirds, sounded sharper and more restless. The composer no longer just chose a key for pitch — they chose it for <strong>color</strong>.</p>
+
+    <div class="demo">
+      <span class="demo-label">listen</span>
+      <h4>The same little tune, in different keys</h4>
+      <div id="key-tunes"></div>
+      <div class="small dim" style="margin-top:14px;">Listen for the subtle differences in how each key "leans." The exaggeration here is mild — historical temperaments differ in the details — but you can feel that each key has its own weather.</div>
+    </div>
+
+    <div class="pros-cons">
+      <div class="pros">
+        <h5>What worked</h5>
+        <ul>
+          <li>Every key now playable</li>
+          <li>Each key has its own character / color</li>
+          <li>Almost certainly the tuning Bach had in mind</li>
+        </ul>
+      </div>
+      <div class="cons">
+        <h5>What didn't</h5>
+        <ul>
+          <li>No interval is perfectly pure anymore</li>
+          <li>Asymmetric — central keys "better" than remote ones</li>
+          <li>The differences are subtle to modern, equal-tempered ears</li>
+        </ul>
+      </div>
+    </div>
+
+    <p>This is also, almost certainly, why Bach wrote <em>The Well-Tempered Clavier</em>: 48 preludes and fugues, one in every major and minor key, partly as a flex to show off the new tuning, partly as a love letter to the idea that <em>every</em> key was now habitable.</p>
+
+    <div class="aside">
+      <span class="label">A composer's palette</span>
+      Across centuries, players and theorists wrote down what they thought each key "felt like" in well-tempered tuning. C major: innocent, simple. D major: triumphant, martial. E-flat major: heroic, the key of Beethoven's <em>Eroica</em>. B minor: patient sorrow. F-sharp minor: rage barely held in. Whether listeners can really hear those colors, or whether the composers <em>made</em> them hear them by association, is one of the great open questions in music perception.
+    </div>
+  </div>
+
+
+  <!-- ============= 4. Kirnberger III ============= -->
+  <div class="temperament-block">
+    <div class="temperament-header">
+      <h3><span class="num">4.</span>Kirnberger III</h3>
+      <div class="temperament-era">1779 · Johann Philipp Kirnberger, a student of Bach</div>
+    </div>
+
+    <p>Bach's pupil J.P. Kirnberger had an obsession: he wanted the pure 5:4 major third on C — meantone's signature glory — but he also wanted every key playable. His third temperament, published nearly a century after Werckmeister's, is the most explicitly fractional of the well-temperaments.</p>
+
+    <p>Take the four fifths from C up to E (C-G, G-D, D-A, A-E) and narrow each by exactly 1/4 of a <em>syntonic</em> comma. After four such steps, you've narrowed by one full syntonic comma — which is exactly the difference between four Pythagorean fifths and a pure major third. So C-E is now a perfectly pure 5:4. The luminous meantone third, preserved at the center of the keyboard.</p>
+
+    <p>But the total tempering is only the syntonic comma (≈21.5¢). To close the circle of fifths back to C, you need to lose the full Pythagorean comma (23.46¢). The difference between those two — about 1.95¢ — has its own name: the <strong>schisma</strong>. Kirnberger tucked this tiny remainder into the F♯-C♯ fifth, and the circle finally closed.</p>
+
+    <div class="chart-wrap">
+      <svg class="demo-svg" id="chart-kirnberger" viewBox="0 0 640 320" preserveAspectRatio="xMidYMid meet"></svg>
+      <div class="recipe-line">4 × −(syntonic / 4)  +  1 × −(schisma)  +  7 × pure  <span class="total">total: −23.46¢</span></div>
+    </div>
+
+    <div class="pros-cons">
+      <div class="pros">
+        <h5>What worked</h5>
+        <ul>
+          <li>C major has a perfectly pure 5:4 third</li>
+          <li>All 24 keys playable</li>
+          <li>Mathematically the most explicit recipe</li>
+        </ul>
+      </div>
+      <div class="cons">
+        <h5>What didn't</h5>
+        <ul>
+          <li>Strong asymmetry — remote keys sound noticeably "off"</li>
+          <li>The schisma fifth is a slightly awkward hack</li>
+          <li>Falling out of favor by 1800 in favor of more even systems</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ============= 5. Vallotti ============= -->
+  <div class="temperament-block">
+    <div class="temperament-header">
+      <h3><span class="num">5.</span>Vallotti</h3>
+      <div class="temperament-era">~1750 · Francesco Antonio Vallotti, Italy</div>
+    </div>
+
+    <p>The Italian Franciscan friar Francesco Antonio Vallotti described his temperament around 1750, though it wasn't published until well after his death. It's beloved by modern early-music performers for one reason: of all the well-temperaments, it's the most <em>symmetric</em>.</p>
+
+    <p>The recipe: take the Pythagorean comma, split it into six equal sixth-pieces (about 3.91¢ each), and apply them to the six "natural" fifths on the flat side of the circle — F-C, C-G, G-D, D-A, A-E, E-B. The other six fifths, on the sharp / remote side, stay perfectly pure.</p>
+
+    <div class="chart-wrap">
+      <svg class="demo-svg" id="chart-vallotti" viewBox="0 0 640 320" preserveAspectRatio="xMidYMid meet"></svg>
+      <div class="recipe-line">6 × −(Pyth. comma / 6)  +  6 × pure  <span class="total">total: −23.46¢</span></div>
+    </div>
+
+    <p>The result feels remarkably modern. The natural keys (C, F, G, D) sound pleasant but not perfectly pure; the remote keys (F♯, C♯, A♭) sound a little bright and sharp, but never offensive. It's a clean middle ground between the colorful asymmetry of Werckmeister and the flat uniformity of equal temperament — and arguably, the most graceful well-temperament ever devised.</p>
+
+    <div class="pros-cons">
+      <div class="pros">
+        <h5>What worked</h5>
+        <ul>
+          <li>Beautifully symmetric distribution</li>
+          <li>Every key smooth, none harsh</li>
+          <li>Still in active use by Baroque ensembles today</li>
+        </ul>
+      </div>
+      <div class="cons">
+        <h5>What didn't</h5>
+        <ul>
+          <li>No interval is perfectly pure</li>
+          <li>Less character than Werckmeister or Kirnberger</li>
+          <li>Compromise of compromises — neither colorful nor uniform</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ============= 6. Equal ============= -->
+  <div class="temperament-block">
+    <div class="temperament-header">
+      <h3><span class="num">6.</span>Equal temperament</h3>
+      <div class="temperament-era">~1900 onward · the modern standard</div>
+    </div>
+
+    <p>By the late 19th century, music had outgrown even the well-tempered map. Composers wanted to modulate freely between any keys, mid-piece, without worrying about which thirds were pure today. The pragmatic, slightly brutalist solution finally won.</p>
+
+    <p>The idea is brutally simple: divide the octave into twelve <em>exactly equal</em> steps. Not equal by ratio (no simple ratio gets you twelve steps to an octave), but equal by the only thing that matters perceptually — equal in <em>logarithm</em>. Each semitone is the twelfth root of two: <span class="mono">2<sup>1/12</sup> ≈ 1.0594631</span>, or precisely 100 cents. Every fifth is narrowed by exactly 1/12 of the Pythagorean comma — the same tiny 1.955¢ everywhere.</p>
+
+    <div class="chart-wrap">
+      <svg class="demo-svg" id="chart-equal" viewBox="0 0 640 320" preserveAspectRatio="xMidYMid meet"></svg>
+      <div class="recipe-line">12 × −(Pyth. comma / 12)  <span class="total">total: −23.46¢</span></div>
+    </div>
+
+    <p>The price: <em>not a single interval other than the octave is pure anymore.</em> Every fifth is slightly flat. Every major third is noticeably sharp. Every key sounds the same as every other, because the tuning is identical in every key.</p>
+
+    <p>The reward: you can play in any key, modulate however you like, retune nothing, and the wolf is dead.</p>
+
+    <div class="demo">
+      <span class="demo-label">listen</span>
+      <h4>What we gave up to gain everything</h4>
+      <div id="et-rows"></div>
+      <div class="small dim" style="margin-top:14px;">The major third is the cruelest cut: equal-tempered is 14 cents sharper than pure. To a trained ear, that's a lot. To most modern listeners, raised on equal-tempered everything since birth — it just sounds like a major third.</div>
+    </div>
+
+    <div class="pros-cons">
+      <div class="pros">
+        <h5>What worked</h5>
+        <ul>
+          <li>Every key sounds identical (just transposed)</li>
+          <li>Free modulation between any keys</li>
+          <li>The wolf is permanently dead</li>
+          <li>Universal compatibility across instruments</li>
+        </ul>
+      </div>
+      <div class="cons">
+        <h5>What didn't</h5>
+        <ul>
+          <li>Nothing is in tune except octaves</li>
+          <li>Major thirds 14¢ sharp — the biggest casualty</li>
+          <li>Key character is gone</li>
+          <li>A subtle, universal mild detuning everywhere</li>
+        </ul>
+      </div>
+    </div>
+
+    <p>This is the tuning of every piano, every guitar fret, every default keyboard preset. It's an act of universal mild detuning that nobody notices because everybody grew up inside it. We collectively decided to be slightly out of tune <em>everywhere</em>, in exchange for never being terribly out of tune <em>anywhere</em>.</p>
+
+    <p>It's one of the great pragmatic compromises in the history of art — and most people who love music have no idea it ever happened.</p>
+  </div>
+</section>
+
+
+<!-- ====================== VIII — FAMILIAR SONGS ====================== -->
+<section id="s10">
+  <h2><span class="num">VIII — Familiar Songs, Two Ways</span>The compromise, in tunes you already know.</h2>
+
+  <p>All of this would be a curiosity if it weren't for the fact that <em>everything you've ever heard</em> has been in equal temperament. Every recording. Every cover of "Happy Birthday." Every backing track. They're all sitting on a grid that the pure ratios never quite agreed to.</p>
+
+  <p>So what if you took a song you already know — a tune your ear has memorized — and tuned it back to the pure ratios our story started with? It would sound almost the same. But not quite.</p>
+
+  <p>Press play on the same melody in both tunings. The differences are small. Listen especially to the third and sixth scale degrees — those are where the gap is widest. If you turn on the drone (a sustained low note underneath), the difference jumps out: in just intonation, the chords lock; in equal temperament, they shimmer with a faint, restless beating.</p>
+
+  <div class="demo">
+    <span class="demo-label">demo 10</span>
+    <h4>The same melody, two tunings</h4>
+    <div id="songs-list"></div>
+    <div class="drone-toggle">
+      <input type="checkbox" id="drone-check" />
+      <label for="drone-check">play a sustained tonic underneath (recommended — makes the difference much more audible)</label>
+    </div>
+    <div class="small dim" style="margin-top:14px;">Just intonation tunes every interval to a pure ratio relative to C. Equal temperament rounds every interval to the nearest 100¢. The most-affected note in each tune is its major third (E) — 14 cents apart between the two systems.</div>
+  </div>
+
+  <p>If you can hear the difference, congratulations: you have officially trained your ears for about ten minutes longer than most adults ever will. If you can't hear it — that's also fine. It means equal temperament did its job. You grew up inside the compromise, and the compromise feels like home.</p>
+</section>
+
+
+<!-- ====================== XI — SYNESTHESIA ====================== -->
+<section id="s11">
+  <h2><span class="num">IX — An Aside</span>Some people see music in color.</h2>
+
+  <p>One more curiosity before we go.</p>
+
+  <p>A small percentage of people — somewhere between 1 in 200 and 1 in 2,000, depending on how strictly you define it — have a condition called <strong>chromesthesia</strong>, a form of synesthesia in which musical notes involuntarily produce sensations of color. For them, a C is not just a C; it's <em>green</em>. Or <em>red</em>. Or <em>something the color of warm copper</em>. The mappings are stable for each person but maddeningly different between people.</p>
+
+  <p>The composer Alexander Scriabin had it. He built a custom instrument called the <em>clavier à lumières</em> — a "keyboard of lights" — and wrote a symphony, <em>Prometheus</em>, that included a part for it. As the orchestra played, the room was supposed to flood with the colors of the keys. The premiere mostly failed because the technology of 1911 wasn't quite up to it, but the idea is wonderful.</p>
+
+  <p>Below is Scriabin's mapping — one of many — laid out across an octave. Click and hold a note to play it and to bathe in its color. There is no "right" answer for which color goes with which note. Every chromesthete will tell you something different. The mystery is not solved.</p>
+
+  <div class="demo">
+    <span class="demo-label">demo 11</span>
+    <h4>One person's notes-as-colors (after Scriabin)</h4>
+    <div class="syn-keyboard" id="syn-keys"></div>
+    <div class="small dim center" style="margin-top: 8px;">Click and hold for a longer note. The color is Scriabin's claim; the sound is just physics.</div>
+  </div>
+
+  <div class="aside">
+    <span class="label">Newton, slightly fibbing</span>
+    Isaac Newton was the one who originally insisted the rainbow had seven colors — red, orange, yellow, green, blue, indigo, violet. Look closely and there really aren't seven distinct bands; indigo in particular is doing a lot of heavy lifting. He picked seven because he wanted the spectrum to mirror the seven notes of the diatonic scale. He was, in other words, doing music theory dressed up as optics.
+  </div>
+</section>
+
+
+<!-- ====================== XII — CODA ====================== -->
+<section class="outro" id="outro">
+  <h2 style="text-align:center;"><span class="num">X — Coda</span>What you're left with.</h2>
+
+  <p style="max-width:560px; margin:0 auto 20px;">You came in knowing nothing about music. You leave knowing that pretty much everything you've ever heard has been gently lying to you — that the piano in your living room is, by ancient standards, slightly out of tune in every key, and that this was a deliberate choice made by people who cared enormously about it.</p>
+
+  <p style="max-width:560px; margin:0 auto 20px;">If you remember anything, let it be this: music is what happens when humans have to negotiate between physics and beauty, between purity and possibility. The numbers don't quite cooperate, and so we compromise, and the compromise <em>becomes the art</em>.</p>
+
+  <p style="max-width:560px; margin:0 auto 30px; color: var(--text-dim); font-size:17px;">You should now have a great many more questions than you started with. Here are a few to take with you:</p>
+
+  <ul class="questions">
+    <li>Why does our brain hear two notes an octave apart as "the same note"?</li>
+    <li>What do the musics of 17-, 22-, or 53-tone systems sound like, and what's possible there that isn't possible in twelve?</li>
+    <li>Why does the minor third make us feel sad? Is that learned, or wired in?</li>
+    <li>What does a fifth sound like to a violinist or a singer, who can play between the cracks of a piano?</li>
+    <li>What about microtonal composers, who actively use the spaces between equal-tempered notes?</li>
+    <li>If equal temperament is so universal now, is there any music being made today that secretly isn't using it?</li>
+    <li>And — if Scriabin saw F-sharp as bright blue, what color is your favorite song?</li>
+  </ul>
+
+  <p style="margin-top:50px; color: var(--text-faint); font-size:14px; font-family: 'Inter', sans-serif; letter-spacing:0.05em;">
+    ⏐ end ⏐
+  </p>
+</section>
+
+</main>
+
+<script>
+/* ============================================================
+   AUDIO ENGINE
+   ============================================================ */
+let audioCtx = null;
+let masterGain = null;
+const activeNodes = new Set();
+const activeButtons = new Set();
+const stopHandlers = new Set();
+
+function ensureAudio() {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    masterGain = audioCtx.createGain();
+    masterGain.gain.value = 0.25;
+    masterGain.connect(audioCtx.destination);
+  }
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  updateStopButton();
+}
+
+function updateStopButton() {
+  const btn = document.getElementById('stop-all');
+  if (activeNodes.size > 0 || activeButtons.size > 0) {
+    btn.classList.add('visible');
+  } else {
+    btn.classList.remove('visible');
+  }
+}
+
+function stopAll() {
+  stopHandlers.forEach(fn => { try { fn(); } catch(e) {} });
+  activeNodes.forEach(n => { try { n.stop(0); } catch(e) {} });
+  activeNodes.clear();
+  activeButtons.forEach(b => b.classList.remove('playing'));
+  activeButtons.clear();
+  document.querySelectorAll('.interval-card.playing').forEach(c => c.classList.remove('playing'));
+  document.querySelectorAll('.syn-key.lit').forEach(k => k.classList.remove('lit'));
+  if (currentLoop) { clearTimeout(currentLoop); currentLoop = null; }
+  updateStopButton();
+}
+
+document.getElementById('stop-all').addEventListener('click', stopAll);
+
+/**
+ * Play a complex tone with given harmonic amplitudes.
+ * One-shot. Returns { gain, oscs, endTime }.
+ */
+function playTone(freq, duration, harmonics, opts = {}) {
+  ensureAudio();
+  const now = audioCtx.currentTime;
+  const start = (opts.startTime !== undefined) ? opts.startTime : now;
+  const attack = opts.attack || 0.02;
+  const release = opts.release || 0.25;
+  const volume = opts.volume !== undefined ? opts.volume : 0.5;
+
+  const gain = audioCtx.createGain();
+  gain.connect(masterGain);
+  gain.gain.setValueAtTime(0.0001, start);
+  gain.gain.exponentialRampToValueAtTime(volume, start + attack);
+  const sustainEnd = start + duration - release;
+  if (sustainEnd > start + attack) {
+    gain.gain.setValueAtTime(volume, sustainEnd);
+  }
+  gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+
+  const created = [];
+  const total = harmonics.reduce((a, b) => a + Math.abs(b), 0) || 1;
+  harmonics.forEach((amp, i) => {
+    if (!amp) return;
+    const osc = audioCtx.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.value = freq * (i + 1);
+    const harmGain = audioCtx.createGain();
+    harmGain.gain.value = amp / total;
+    osc.connect(harmGain);
+    harmGain.connect(gain);
+    osc.start(start);
+    osc.stop(start + duration + 0.05);
+    osc.onended = () => {
+      activeNodes.delete(osc);
+      updateStopButton();
+    };
+    activeNodes.add(osc);
+    created.push(osc);
+  });
+  updateStopButton();
+  return { gain, oscs: created, endTime: start + duration };
+}
+
+/**
+ * Persistent (sustained) tone. Lets you change frequency and harmonic amplitudes
+ * in real time. Returns a handle with .setFreq, .setAmps, .stop.
+ */
+function makeSustainedTone(initFreq, initAmps, opts = {}) {
+  ensureAudio();
+  const NUM = initAmps.length;
+  const now = audioCtx.currentTime;
+  const volume = opts.volume !== undefined ? opts.volume : 0.4;
+  const attack = opts.attack || 0.04;
+
+  const envGain = audioCtx.createGain();
+  envGain.connect(masterGain);
+  envGain.gain.setValueAtTime(0.0001, now);
+  envGain.gain.exponentialRampToValueAtTime(volume, now + attack);
+
+  const oscs = [];
+  const gains = [];
+  const total0 = initAmps.reduce((s, a) => s + Math.abs(a), 0) || 1;
+  for (let i = 0; i < NUM; i++) {
+    const osc = audioCtx.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.value = initFreq * (i + 1);
+    const g = audioCtx.createGain();
+    g.gain.value = initAmps[i] / total0;
+    osc.connect(g);
+    g.connect(envGain);
+    osc.start(now);
+    activeNodes.add(osc);
+    osc.onended = () => {
+      activeNodes.delete(osc);
+      updateStopButton();
+    };
+    oscs.push(osc);
+    gains.push(g);
+  }
+
+  let currentFreq = initFreq;
+  let stopped = false;
+
+  return {
+    setFreq(freq) {
+      if (stopped) return;
+      currentFreq = freq;
+      const t = audioCtx.currentTime;
+      oscs.forEach((osc, i) => {
+        osc.frequency.cancelScheduledValues(t);
+        osc.frequency.linearRampToValueAtTime(freq * (i + 1), t + 0.04);
+      });
+    },
+    setAmps(amps) {
+      if (stopped) return;
+      const t = audioCtx.currentTime;
+      const total = amps.reduce((s, a) => s + Math.abs(a), 0) || 1;
+      gains.forEach((g, i) => {
+        const target = (amps[i] || 0) / total;
+        g.gain.cancelScheduledValues(t);
+        g.gain.linearRampToValueAtTime(target, t + 0.04);
+      });
+    },
+    setVolume(v) {
+      if (stopped) return;
+      const t = audioCtx.currentTime;
+      envGain.gain.cancelScheduledValues(t);
+      envGain.gain.linearRampToValueAtTime(v, t + 0.04);
+    },
+    stop() {
+      if (stopped) return;
+      stopped = true;
+      const t = audioCtx.currentTime;
+      envGain.gain.cancelScheduledValues(t);
+      envGain.gain.setValueAtTime(envGain.gain.value, t);
+      envGain.gain.exponentialRampToValueAtTime(0.0001, t + 0.35);
+      oscs.forEach(o => { try { o.stop(t + 0.4); } catch(e) {} });
+    },
+    get freq() { return currentFreq; },
+    get stopped() { return stopped; },
+  };
+}
+
+/* note names from frequency */
+const noteNames = ['C','C♯','D','E♭','E','F','F♯','G','A♭','A','B♭','B'];
+function freqToNoteName(freq) {
+  const a4 = 440;
+  const semis = 12 * Math.log2(freq / a4);
+  const rounded = Math.round(semis);
+  const cents = Math.round((semis - rounded) * 100);
+  const noteIdx = ((rounded + 9) % 12 + 12) % 12;
+  const octave = 4 + Math.floor((rounded + 9) / 12);
+  const name = noteNames[noteIdx] + octave;
+  if (Math.abs(cents) < 5) return `≈ ${name}`;
+  return `≈ ${name} ${cents > 0 ? '+' : ''}${cents}¢`;
+}
+
+
+/* ============================================================
+   HERO CANVAS — ambient flowing waves
+   ============================================================ */
+(function heroCanvas() {
+  const c = document.getElementById('hero-canvas');
+  const ctx = c.getContext('2d');
+  let w, h;
+  function resize() {
+    const dpr = window.devicePixelRatio || 1;
+    w = c.clientWidth; h = c.clientHeight;
+    c.width = w * dpr;
+    c.height = h * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  let t = 0;
+  const palette = ['#e6b450', '#7ec4cf', '#b48ead'];
+
+  function draw() {
+    ctx.clearRect(0, 0, w, h);
+    palette.forEach((color, i) => {
+      ctx.beginPath();
+      ctx.strokeStyle = color;
+      ctx.globalAlpha = 0.35;
+      ctx.lineWidth = 1.2;
+      const freq = 0.005 + i * 0.002;
+      const amp = 30 + i * 12;
+      const phase = t * (0.4 + i * 0.15) + i * 1.5;
+      for (let x = 0; x <= w; x += 4) {
+        const y = h / 2 + Math.sin(x * freq + phase) * amp + Math.sin(x * freq * 2 + phase * 1.7) * amp * 0.3;
+        if (x === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    });
+    t += 0.012;
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+
+/* ============================================================
+   DEMO 1: Frequency slider
+   ============================================================ */
+(function demo1() {
+  const svg = document.getElementById('wave-1');
+  const slider = document.getElementById('slider-1');
+  const freqLabel = document.getElementById('freq-1');
+  const noteLabel = document.getElementById('note-1');
+  const playBtn = document.getElementById('play-1');
+
+  let tone = null;
+
+  function drawWave(freq) {
+    const w = 600, h = 160, cy = h / 2;
+    const visualCycles = Math.max(2, Math.min(20, freq / 60));
+    let path = '';
+    for (let x = 0; x <= w; x += 2) {
+      const phase = (x / w) * visualCycles * 2 * Math.PI;
+      const y = cy + Math.sin(phase) * 55;
+      path += (x === 0 ? `M ${x},${y}` : ` L ${x},${y}`);
+    }
+    svg.innerHTML = `
+      <line x1="0" y1="${cy}" x2="${w}" y2="${cy}" stroke="#2a2f44" stroke-width="1"/>
+      <path d="${path}" fill="none" stroke="#e6b450" stroke-width="2"/>
+    `;
+  }
+
+  function update() {
+    const f = parseFloat(slider.value);
+    freqLabel.textContent = f.toFixed(1);
+    noteLabel.textContent = freqToNoteName(f);
+    drawWave(f);
+    if (tone) tone.setFreq(f);
+  }
+  slider.addEventListener('input', update);
+  update();
+
+  function start() {
+    if (tone) return;
+    const f = parseFloat(slider.value);
+    tone = makeSustainedTone(f, [1], { volume: 0.35, attack: 0.03 });
+    playBtn.textContent = '◼ stop';
+    playBtn.classList.add('playing');
+    activeButtons.add(playBtn);
+    updateStopButton();
+  }
+  function stop() {
+    if (!tone) return;
+    tone.stop();
+    tone = null;
+    playBtn.textContent = '▶ play';
+    playBtn.classList.remove('playing');
+    activeButtons.delete(playBtn);
+    updateStopButton();
+  }
+  stopHandlers.add(stop);
+
+  playBtn.addEventListener('click', () => tone ? stop() : start());
+
+  document.querySelectorAll('[data-freq]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      slider.value = btn.dataset.freq;
+      update();
+    });
+  });
+})();
+
+
+/* ============================================================
+   DEMO 2: Harmonics builder (sustained, real-time)
+   ============================================================ */
+(function demo2() {
+  const NUM_HARM = 8;
+  const slidersWrap = document.getElementById('harm-sliders');
+  const wave = document.getElementById('wave-2');
+  const playBtn = document.getElementById('play-2');
+  const presetButtons = document.querySelectorAll('#harm-presets .btn');
+  const F = 220;
+  const AUTO_STOP_MS = 12000;
+
+  const presets = {
+    sine:     [1, 0, 0, 0, 0, 0, 0, 0],
+    flute:    [1, 0.25, 0.05, 0.02, 0, 0, 0, 0],
+    violin:   [1, 0.7, 0.5, 0.4, 0.3, 0.25, 0.18, 0.15],
+    clarinet: [1, 0, 0.7, 0, 0.5, 0, 0.3, 0],
+    organ:    [1, 0.8, 0.5, 0.3, 0.4, 0.2, 0.15, 0.1],
+    sawtooth: [1, 0.5, 0.33, 0.25, 0.2, 0.167, 0.143, 0.125],
+  };
+
+  let amps = presets.flute.slice();
+  let tone = null;
+  let autoTimer = null;
+  let currentPreset = null;
+
+  // build sliders
+  slidersWrap.innerHTML = '';
+  amps.forEach((a, i) => {
+    const row = document.createElement('div');
+    row.className = 'harm-row';
+    row.innerHTML = `
+      <div class="harm-label">${i + 1}× <span class="dim">${i === 0 ? '(root)' : '(h' + (i+1) + ')'}</span></div>
+      <input type="range" min="0" max="1" step="0.01" value="${a}" data-i="${i}"/>
+      <div class="harm-value" data-v="${i}">${a.toFixed(2)}</div>
+    `;
+    slidersWrap.appendChild(row);
+  });
+
+  function drawWave() {
+    const w = 600, h = 160, cy = h / 2;
+    const total = amps.reduce((s, a) => s + Math.abs(a), 0) || 1;
+    let path = '';
+    const visualCycles = 3;
+    for (let x = 0; x <= w; x += 2) {
+      const t = (x / w) * visualCycles * 2 * Math.PI;
+      let y = 0;
+      amps.forEach((amp, i) => { y += Math.sin(t * (i + 1)) * amp; });
+      y = y / total;
+      const yPx = cy + y * 55;
+      path += (x === 0 ? `M ${x},${yPx}` : ` L ${x},${yPx}`);
+    }
+    let ghosts = '';
+    amps.forEach((amp, i) => {
+      if (amp < 0.05) return;
+      let p = '';
+      for (let x = 0; x <= w; x += 2) {
+        const t = (x / w) * visualCycles * 2 * Math.PI;
+        const yv = Math.sin(t * (i + 1)) * (amp / total);
+        const yPx = cy + yv * 55;
+        p += (x === 0 ? `M ${x},${yPx}` : ` L ${x},${yPx}`);
+      }
+      ghosts += `<path d="${p}" fill="none" stroke="#7ec4cf" stroke-width="0.7" opacity="${0.15 + amp*0.15}"/>`;
+    });
+    wave.innerHTML = `
+      <line x1="0" y1="${cy}" x2="${w}" y2="${cy}" stroke="#2a2f44" stroke-width="1"/>
+      ${ghosts}
+      <path d="${path}" fill="none" stroke="#e6b450" stroke-width="2"/>
+    `;
+  }
+
+  function resetAutoStop() {
+    if (autoTimer) clearTimeout(autoTimer);
+    autoTimer = setTimeout(() => stop(), AUTO_STOP_MS);
+  }
+
+  function start() {
+    if (tone) return;
+    tone = makeSustainedTone(F, amps.slice(), { volume: 0.35, attack: 0.05 });
+    playBtn.textContent = '◼ stop';
+    playBtn.classList.add('playing');
+    activeButtons.add(playBtn);
+    resetAutoStop();
+    updateStopButton();
+  }
+  function stop() {
+    if (!tone) return;
+    tone.stop();
+    tone = null;
+    playBtn.textContent = '▶ play / stop';
+    playBtn.classList.remove('playing');
+    activeButtons.delete(playBtn);
+    if (autoTimer) { clearTimeout(autoTimer); autoTimer = null; }
+    updateStopButton();
+  }
+  stopHandlers.add(stop);
+
+  function applyPreset(name) {
+    amps = presets[name].slice();
+    amps.forEach((a, i) => {
+      const inp = slidersWrap.querySelector(`input[data-i="${i}"]`);
+      const lbl = slidersWrap.querySelector(`[data-v="${i}"]`);
+      if (inp) inp.value = a;
+      if (lbl) lbl.textContent = a.toFixed(2);
+    });
+    drawWave();
+    presetButtons.forEach(b => b.classList.toggle('active', b.dataset.preset === name));
+    currentPreset = name;
+    if (tone) {
+      tone.setAmps(amps);
+      resetAutoStop();
+    }
+  }
+
+  slidersWrap.addEventListener('input', e => {
+    if (e.target.matches('input[type="range"]')) {
+      const i = parseInt(e.target.dataset.i);
+      amps[i] = parseFloat(e.target.value);
+      slidersWrap.querySelector(`[data-v="${i}"]`).textContent = amps[i].toFixed(2);
+      drawWave();
+      presetButtons.forEach(b => b.classList.remove('active'));
+      currentPreset = null;
+      if (tone) {
+        tone.setAmps(amps);
+        resetAutoStop();
+      }
+    }
+  });
+
+  presetButtons.forEach(b => b.addEventListener('click', () => {
+    // Toggle off if clicking the same preset that's currently playing
+    if (tone && currentPreset === b.dataset.preset) {
+      stop();
+      return;
+    }
+    applyPreset(b.dataset.preset);
+    if (!tone) start();
+    else resetAutoStop();
+  }));
+
+  playBtn.addEventListener('click', () => tone ? stop() : start());
+
+  // init
+  applyPreset('flute');
+})();
+
+
+/* ============================================================
+   DEMO 3: Two waves (sustained, real-time)
+   ============================================================ */
+(function demo3() {
+  const svg = document.getElementById('wave-3');
+  const slider = document.getElementById('slider-3');
+  const ratioLabel = document.getElementById('ratio-3');
+  const labelEl = document.getElementById('label-3');
+  const playBtn = document.getElementById('play-3');
+  const AUTO_STOP_MS = 12000;
+  const F1 = 220;
+  const harm = [1, 0.4, 0.2, 0.1];
+
+  let toneA = null, toneB = null;
+  let autoTimer = null;
+
+  function describeRatio(r) {
+    const candidates = [
+      { r: 2,     name: 'an octave',        pretty: '2 : 1' },
+      { r: 1.5,   name: 'a perfect fifth',  pretty: '3 : 2' },
+      { r: 1.333, name: 'a perfect fourth', pretty: '4 : 3' },
+      { r: 1.25,  name: 'a major third',    pretty: '5 : 4' },
+      { r: 1.2,   name: 'a minor third',    pretty: '6 : 5' },
+      { r: 1.414, name: 'a tritone (irrational)', pretty: '≈ √2 : 1' },
+      { r: 1.067, name: 'a semitone',       pretty: '16 : 15' },
+    ];
+    let best = null, bestDist = 1;
+    candidates.forEach(c => {
+      const d = Math.abs(r - c.r) / c.r;
+      if (d < bestDist) { bestDist = d; best = c; }
+    });
+    if (bestDist < 0.012) return best;
+    return { r, name: 'no simple ratio', pretty: r.toFixed(3) + ' : 1' };
+  }
+
+  function draw() {
+    const r = parseFloat(slider.value) / 100;
+    const m = describeRatio(r);
+    ratioLabel.textContent = m.pretty;
+    labelEl.textContent = '— ' + m.name;
+
+    const w = 600, h = 220, cy1 = 50, cy2 = 110, cy3 = 180;
+    const visualCycles = 4;
+    let p1 = '', p2 = '', p3 = '';
+    for (let x = 0; x <= w; x += 2) {
+      const t = (x / w) * visualCycles * 2 * Math.PI;
+      const y1 = Math.sin(t);
+      const y2 = Math.sin(t * r);
+      const yc = (y1 + y2) / 2;
+      const yp1 = cy1 + y1 * 22;
+      const yp2 = cy2 + y2 * 22;
+      const yp3 = cy3 + yc * 32;
+      p1 += (x === 0 ? `M ${x},${yp1}` : ` L ${x},${yp1}`);
+      p2 += (x === 0 ? `M ${x},${yp2}` : ` L ${x},${yp2}`);
+      p3 += (x === 0 ? `M ${x},${yp3}` : ` L ${x},${yp3}`);
+    }
+    svg.innerHTML = `
+      <text x="6" y="14" fill="#6b6759" font-family="Inter,sans-serif" font-size="10" letter-spacing="0.15em">LOW NOTE</text>
+      <line x1="0" y1="${cy1}" x2="${w}" y2="${cy1}" stroke="#2a2f44"/>
+      <path d="${p1}" fill="none" stroke="#7ec4cf" stroke-width="1.8"/>
+      <text x="6" y="74" fill="#6b6759" font-family="Inter,sans-serif" font-size="10" letter-spacing="0.15em">HIGH NOTE</text>
+      <line x1="0" y1="${cy2}" x2="${w}" y2="${cy2}" stroke="#2a2f44"/>
+      <path d="${p2}" fill="none" stroke="#b48ead" stroke-width="1.8"/>
+      <text x="6" y="144" fill="#6b6759" font-family="Inter,sans-serif" font-size="10" letter-spacing="0.15em">SUM (what your ear hears)</text>
+      <line x1="0" y1="${cy3}" x2="${w}" y2="${cy3}" stroke="#2a2f44"/>
+      <path d="${p3}" fill="none" stroke="#e6b450" stroke-width="2"/>
+    `;
+  }
+
+  function resetAutoStop() {
+    if (autoTimer) clearTimeout(autoTimer);
+    autoTimer = setTimeout(() => stop(), AUTO_STOP_MS);
+  }
+
+  function start() {
+    if (toneA) return;
+    const r = parseFloat(slider.value) / 100;
+    toneA = makeSustainedTone(F1, harm, { volume: 0.32, attack: 0.04 });
+    toneB = makeSustainedTone(F1 * r, harm, { volume: 0.32, attack: 0.04 });
+    playBtn.textContent = '◼ stop';
+    playBtn.classList.add('playing');
+    activeButtons.add(playBtn);
+    resetAutoStop();
+    updateStopButton();
+  }
+  function stop() {
+    if (!toneA) return;
+    toneA.stop(); toneB.stop();
+    toneA = null; toneB = null;
+    playBtn.textContent = '▶ play / stop';
+    playBtn.classList.remove('playing');
+    activeButtons.delete(playBtn);
+    if (autoTimer) { clearTimeout(autoTimer); autoTimer = null; }
+    updateStopButton();
+  }
+  stopHandlers.add(stop);
+
+  slider.addEventListener('input', () => {
+    draw();
+    if (toneB) {
+      const r = parseFloat(slider.value) / 100;
+      toneB.setFreq(F1 * r);
+      resetAutoStop();
+    }
+  });
+  draw();
+
+  playBtn.addEventListener('click', () => toneA ? stop() : start());
+
+  document.querySelectorAll('[data-ratio]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const r = parseFloat(btn.dataset.ratio);
+      slider.value = Math.round(r * 100);
+      draw();
+      if (toneB) {
+        toneB.setFreq(F1 * r);
+        resetAutoStop();
+      } else {
+        start();
+      }
+    });
+  });
+})();
+
+
+/* ============================================================
+   DEMO 4: Interval grid (stop others before playing)
+   ============================================================ */
+(function demo4() {
+  const grid = document.getElementById('interval-grid');
+  const intervals = [
+    { name: 'Unison',         ratio: [1, 1],  cents: 0,    feel: 'the same note',         class: '' },
+    { name: 'Octave',         ratio: [2, 1],  cents: 1200, feel: 'the same, but higher',  class: '' },
+    { name: 'Perfect fifth',  ratio: [3, 2],  cents: 702,  feel: 'open, stable',          class: '' },
+    { name: 'Perfect fourth', ratio: [4, 3],  cents: 498,  feel: 'open, suspended',       class: '' },
+    { name: 'Major third',    ratio: [5, 4],  cents: 386,  feel: 'bright, happy',         class: '' },
+    { name: 'Minor third',    ratio: [6, 5],  cents: 316,  feel: 'sad, soft',             class: '' },
+    { name: 'Major sixth',    ratio: [5, 3],  cents: 884,  feel: 'lush, longing',         class: '' },
+    { name: 'Minor sixth',    ratio: [8, 5],  cents: 814,  feel: 'wistful',               class: '' },
+    { name: 'Major second',   ratio: [9, 8],  cents: 204,  feel: 'a small step',          class: '' },
+    { name: 'Minor second',   ratio: [16,15], cents: 112,  feel: 'tense, pulling',        class: 'dissonant' },
+    { name: 'Tritone',        ratio: [45,32], cents: 590,  feel: 'unsettled, restless',   class: 'dissonant' },
+    { name: 'Minor seventh',  ratio: [9, 5],  cents: 1018, feel: 'aching for resolution', class: 'dissonant' },
+  ];
+
+  intervals.forEach(iv => {
+    const btn = document.createElement('button');
+    btn.className = 'interval-card ' + iv.class;
+    btn.innerHTML = `
+      <div class="name">${iv.name}</div>
+      <div class="ratio">${iv.ratio[0]} : ${iv.ratio[1]} <span class="dim mono">· ${iv.cents}¢</span></div>
+      <div class="feel">${iv.feel}</div>
+    `;
+    btn.addEventListener('click', () => {
+      const wasPlaying = btn.classList.contains('playing');
+      stopAll();
+      if (wasPlaying) return;
+      const F1 = 220;
+      const F2 = F1 * iv.ratio[0] / iv.ratio[1];
+      const harm = [1, 0.45, 0.22, 0.12, 0.06];
+      const a = playTone(F1, 3, harm, { volume: 0.4 });
+      playTone(F2, 3, harm, { volume: 0.4 });
+      btn.classList.add('playing');
+      activeButtons.add(btn);
+      a.oscs[0]?.addEventListener('ended', () => {
+        btn.classList.remove('playing');
+        activeButtons.delete(btn);
+        updateStopButton();
+      }, { once: true });
+    });
+    grid.appendChild(btn);
+  });
+})();
+
+
+/* ============================================================
+   DEMO 5: Cents ruler — ET semitones vs just ratios
+   ============================================================ */
+(function demo5() {
+  const svg = document.getElementById('cents-ruler');
+  const F0 = 261.63; // C4
+
+  // Equal-tempered semitones across one octave (in cents)
+  const semis = [
+    { c: 0,    name: 'C'  },
+    { c: 100,  name: 'C♯' },
+    { c: 200,  name: 'D'  },
+    { c: 300,  name: 'E♭' },
+    { c: 400,  name: 'E'  },
+    { c: 500,  name: 'F'  },
+    { c: 600,  name: 'F♯' },
+    { c: 700,  name: 'G'  },
+    { c: 800,  name: 'A♭' },
+    { c: 900,  name: 'A'  },
+    { c: 1000, name: 'B♭' },
+    { c: 1100, name: 'B'  },
+    { c: 1200, name: 'C'  },
+  ];
+
+  // Just-intonation positions (5-limit)
+  const justs = [
+    { num: 1,  den: 1,  c: 0,    name: '1/1'  },
+    { num: 16, den: 15, c: 112,  name: '16/15' },
+    { num: 9,  den: 8,  c: 204,  name: '9/8'  },
+    { num: 6,  den: 5,  c: 316,  name: '6/5'  },
+    { num: 5,  den: 4,  c: 386,  name: '5/4'  },
+    { num: 4,  den: 3,  c: 498,  name: '4/3'  },
+    { num: 45, den: 32, c: 590,  name: '45/32' },
+    { num: 3,  den: 2,  c: 702,  name: '3/2'  },
+    { num: 8,  den: 5,  c: 814,  name: '8/5'  },
+    { num: 5,  den: 3,  c: 884,  name: '5/3'  },
+    { num: 9,  den: 5,  c: 1018, name: '9/5'  },
+    { num: 15, den: 8,  c: 1088, name: '15/8' },
+    { num: 2,  den: 1,  c: 1200, name: '2/1'  },
+  ];
+
+  const W = 760, padL = 40, padR = 40;
+  const usable = W - padL - padR;
+  function xFor(cents) { return padL + (cents / 1200) * usable; }
+
+  let html = '';
+  // ET line
+  const yET = 70, yJI = 150;
+  const hitW = 26; // hit-target width
+  html += `<line x1="${padL}" y1="${yET}" x2="${W - padR}" y2="${yET}" stroke="#3a4060" stroke-width="1"/>`;
+  html += `<line x1="${padL}" y1="${yJI}" x2="${W - padR}" y2="${yJI}" stroke="#3a4060" stroke-width="1"/>`;
+
+  // ET ticks
+  semis.forEach((s, i) => {
+    const x = xFor(s.c);
+    const isWhite = ![1,3,6,8,10].includes(i);
+    const tickH = isWhite ? 14 : 9;
+    html += `<g class="tick-group" data-cents="${s.c}">`;
+    html += `<rect x="${x - hitW/2}" y="${yET - 24}" width="${hitW}" height="48" fill="transparent"/>`;
+    html += `<line class="tick-line" x1="${x}" y1="${yET - tickH}" x2="${x}" y2="${yET + tickH}" stroke="${isWhite ? '#7ec4cf' : '#5a6080'}" stroke-width="${isWhite ? 1.5 : 1}"/>`;
+    html += `<text x="${x}" y="${yET - 22}" fill="#7ec4cf" font-family="JetBrains Mono,monospace" font-size="10" text-anchor="middle">${s.name}</text>`;
+    if (i % 2 === 0) {
+      html += `<text x="${x}" y="${yET - 35}" fill="#6b6759" font-family="JetBrains Mono,monospace" font-size="9" text-anchor="middle">${s.c}¢</text>`;
+    }
+    html += `</g>`;
+  });
+
+  // JI ticks
+  justs.forEach((j, i) => {
+    const x = xFor(j.c);
+    html += `<g class="tick-group" data-cents="${j.c}">`;
+    html += `<rect x="${x - hitW/2}" y="${yJI - 24}" width="${hitW}" height="48" fill="transparent"/>`;
+    html += `<line class="tick-line" x1="${x}" y1="${yJI - 14}" x2="${x}" y2="${yJI + 14}" stroke="#e6b450" stroke-width="1.5"/>`;
+    html += `<text x="${x}" y="${yJI + 30}" fill="#e6b450" font-family="JetBrains Mono,monospace" font-size="10" text-anchor="middle">${j.name}</text>`;
+    if (i % 2 === 1 || i === 0 || i === justs.length - 1) {
+      html += `<text x="${x}" y="${yJI + 44}" fill="#6b6759" font-family="JetBrains Mono,monospace" font-size="9" text-anchor="middle">${j.c}¢</text>`;
+    }
+    html += `</g>`;
+  });
+
+  // labels
+  html += `<text x="${padL - 6}" y="${yET + 4}" fill="#7ec4cf" font-family="Inter,sans-serif" font-size="10" text-anchor="end" letter-spacing="0.1em">ET</text>`;
+  html += `<text x="${padL - 6}" y="${yJI + 4}" fill="#e6b450" font-family="Inter,sans-serif" font-size="10" text-anchor="end" letter-spacing="0.1em">JI</text>`;
+
+  // connector dotted lines between corresponding pairs (where they don't match)
+  const pairs = [
+    [200, 204], [300, 316], [400, 386], [500, 498], [700, 702],
+    [800, 814], [900, 884], [1000, 1018], [1100, 1088],
+  ];
+  pairs.forEach(([et, ji]) => {
+    const x1 = xFor(et);
+    const x2 = xFor(ji);
+    html += `<path d="M ${x1} ${yET + 14} L ${x2} ${yJI - 14}" stroke="#3a4060" stroke-width="0.8" stroke-dasharray="2,3" fill="none"/>`;
+  });
+
+  svg.innerHTML = html;
+
+  // Clicks play that pitch
+  svg.querySelectorAll('.tick-group').forEach(el => {
+    el.addEventListener('click', () => {
+      stopAll();
+      const cents = parseFloat(el.dataset.cents);
+      const freq = F0 * Math.pow(2, cents / 1200);
+      playTone(freq, 1.6, [1, 0.4, 0.2, 0.1], { volume: 0.4 });
+    });
+  });
+})();
+
+
+/* ============================================================
+   DEMO 6: Circle of fifths / Pythagorean comma
+   ============================================================ */
+(function demo6() {
+  const svg = document.getElementById('fifths-svg');
+  const readout = document.getElementById('fifths-readout');
+  const stepBtn = document.getElementById('fifths-step');
+  const resetBtn = document.getElementById('fifths-reset');
+
+  const F0 = 220;
+  let step = 0;
+
+  function foldedFreq(n) {
+    let f = F0 * Math.pow(3/2, n);
+    while (f >= F0 * 2) f /= 2;
+    while (f < F0) f *= 2;
+    return f;
+  }
+
+  function render() {
+    const cx = 170, cy = 170, baseR = 110;
+    let inner = '';
+    inner += `<circle cx="${cx}" cy="${cy}" r="${baseR}" fill="none" stroke="#2a2f44" stroke-width="1"/>`;
+    inner += `<circle cx="${cx}" cy="${cy}" r="${baseR}" fill="none" stroke="#2a2f44" stroke-width="1" stroke-dasharray="2,3"/>`;
+    for (let i = 0; i < 12; i++) {
+      const ang = i * (2 * Math.PI / 12) - Math.PI / 2;
+      const x1 = cx + Math.cos(ang) * (baseR - 6);
+      const y1 = cy + Math.sin(ang) * (baseR - 6);
+      const x2 = cx + Math.cos(ang) * (baseR + 6);
+      const y2 = cy + Math.sin(ang) * (baseR + 6);
+      inner += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#3a4060" stroke-width="1"/>`;
+    }
+
+    const points = [];
+    for (let n = 0; n <= step; n++) {
+      const ang = (n / 12) * 2 * Math.PI - Math.PI / 2;
+      const r = baseR + (n * 1.6);
+      const x = cx + Math.cos(ang) * r;
+      const y = cy + Math.sin(ang) * r;
+      points.push({ x, y, n });
+    }
+    if (points.length > 1) {
+      let path = `M ${points[0].x} ${points[0].y}`;
+      points.forEach((p, i) => { if (i > 0) path += ` L ${p.x} ${p.y}`; });
+      inner += `<path d="${path}" fill="none" stroke="#e6b450" stroke-width="1.5" opacity="0.6"/>`;
+    }
+    points.forEach((p, i) => {
+      const isLast = i === points.length - 1;
+      const color = i === 0 ? '#7ec4cf' : (isLast ? '#e88c8c' : '#e6b450');
+      const radius = isLast ? 6 : (i === 0 ? 5 : 3.5);
+      inner += `<circle cx="${p.x}" cy="${p.y}" r="${radius}" fill="${color}"/>`;
+      if (i === 0 || isLast) {
+        inner += `<text x="${p.x}" y="${p.y - 10}" fill="${color}" font-family="JetBrains Mono,monospace" font-size="10" text-anchor="middle">${i === 0 ? 'start' : 'step ' + i}</text>`;
+      }
+    });
+    inner += `<text x="${cx}" y="${cy - 4}" fill="#6b6759" font-family="Inter,sans-serif" font-size="10" letter-spacing="0.15em" text-anchor="middle">CIRCLE OF</text>`;
+    inner += `<text x="${cx}" y="${cy + 10}" fill="#6b6759" font-family="Inter,sans-serif" font-size="10" letter-spacing="0.15em" text-anchor="middle">FIFTHS</text>`;
+    svg.innerHTML = inner;
+
+    let html = '';
+    html += `<div class="row-r"><span>steps taken</span><b>${step} / 12</b></div>`;
+    const f = foldedFreq(step);
+    html += `<div class="row-r"><span>folded freq</span><b>${f.toFixed(2)} Hz</b></div>`;
+    if (step === 0) {
+      html += `<div class="row-r"><span>vs. start</span><b>identical</b></div>`;
+    } else {
+      const cents = 1200 * Math.log2(f / F0);
+      html += `<div class="row-r"><span>vs. start</span><b>${cents > 0 ? '+' : ''}${cents.toFixed(2)}¢</b></div>`;
+    }
+    if (step === 12) {
+      html += `<div class="row-r" style="margin-top:10px;"><span style="color:#e88c8c;">the comma</span><b style="color:#e88c8c;">≈ 23.46¢</b></div>`;
+      html += `<div class="dim" style="font-size:12px; margin-top:8px; line-height:1.5;">You took twelve perfect fifths and landed sharp.</div>`;
+    }
+    readout.innerHTML = html;
+  }
+
+  stepBtn.addEventListener('click', () => {
+    if (step >= 12) return;
+    step++;
+    render();
+    const f = foldedFreq(step);
+    stopAll();
+    playTone(f, 0.7, [1, 0.4, 0.2, 0.1], { volume: 0.4 });
+    if (step >= 12) stepBtn.disabled = true;
+  });
+  resetBtn.addEventListener('click', () => {
+    step = 0;
+    stepBtn.disabled = false;
+    render();
+  });
+  render();
+})();
+
+
+/* ============================================================
+   DEMO 6b: Two-paths ladder
+   ============================================================ */
+(function demo6b() {
+  const svg = document.getElementById('paths-svg');
+  const W = 600, H = 380;
+  const padTop = 80, padBottom = 40;
+  const totalCents = 8424; // 12 fifths
+  function yFor(c) { return H - padBottom - ((c / totalCents) * (H - padTop - padBottom)); }
+
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+
+  let html = '';
+  const xOct = 200, xFifth = 420;
+
+  // baseline
+  const y0 = yFor(0);
+  html += `<line x1="${xOct}" y1="${y0}" x2="${xFifth}" y2="${y0}" stroke="#2a2f44" stroke-width="1"/>`;
+
+  // dashed line at top-of-octaves height (where fifths "should" land)
+  const yOctTop = yFor(7 * 1200);
+  const yFifthTop = yFor(12 * 702);
+  html += `<line x1="${xOct - 60}" y1="${yOctTop}" x2="${xFifth + 60}" y2="${yOctTop}" stroke="#7ec4cf" stroke-width="0.5" stroke-dasharray="3,3" opacity="0.5"/>`;
+
+  // OCTAVES column header (well above the top tick)
+  html += `<text x="${xOct}" y="24" fill="#7ec4cf" font-family="Inter,sans-serif" font-size="11" letter-spacing="0.15em" text-anchor="middle">7 OCTAVES</text>`;
+  html += `<text x="${xOct}" y="42" fill="#6b6759" font-family="JetBrains Mono,monospace" font-size="10" text-anchor="middle">×2 each step</text>`;
+  for (let i = 0; i <= 7; i++) {
+    const y = yFor(i * 1200);
+    html += `<line x1="${xOct - 40}" y1="${y}" x2="${xOct + 40}" y2="${y}" stroke="#7ec4cf" stroke-width="${i === 0 || i === 7 ? 2 : 1}"/>`;
+    if (i > 0) {
+      html += `<text x="${xOct - 50}" y="${y + 4}" fill="#a8a294" font-family="JetBrains Mono,monospace" font-size="10" text-anchor="end">${i}</text>`;
+    }
+    html += `<text x="${xOct + 50}" y="${y + 4}" fill="#7ec4cf" font-family="JetBrains Mono,monospace" font-size="10">${(i * 1200)}¢</text>`;
+  }
+
+  // FIFTHS column header (well above the top tick)
+  html += `<text x="${xFifth}" y="24" fill="#e6b450" font-family="Inter,sans-serif" font-size="11" letter-spacing="0.15em" text-anchor="middle">12 FIFTHS</text>`;
+  html += `<text x="${xFifth}" y="42" fill="#6b6759" font-family="JetBrains Mono,monospace" font-size="10" text-anchor="middle">×3/2 each step</text>`;
+  for (let i = 0; i <= 12; i++) {
+    const y = yFor(i * 702);
+    html += `<line x1="${xFifth - 40}" y1="${y}" x2="${xFifth + 40}" y2="${y}" stroke="#e6b450" stroke-width="${i === 0 || i === 12 ? 2 : 1}"/>`;
+    if (i > 0) {
+      html += `<text x="${xFifth + 50}" y="${y + 4}" fill="#a8a294" font-family="JetBrains Mono,monospace" font-size="10">${i}</text>`;
+    }
+    html += `<text x="${xFifth - 50}" y="${y + 4}" fill="#e6b450" font-family="JetBrains Mono,monospace" font-size="10" text-anchor="end">${(i * 702)}¢</text>`;
+  }
+
+  // gap annotation (the bracket showing the comma)
+  const gapY = (yOctTop + yFifthTop) / 2;
+  html += `<path d="M ${xFifth + 88} ${yOctTop} L ${xFifth + 108} ${yOctTop} L ${xFifth + 108} ${yFifthTop} L ${xFifth + 88} ${yFifthTop}" fill="none" stroke="#e88c8c" stroke-width="1.5"/>`;
+  html += `<text x="${xFifth + 116}" y="${gapY - 4}" fill="#e88c8c" font-family="JetBrains Mono,monospace" font-size="11">23.46¢</text>`;
+  html += `<text x="${xFifth + 116}" y="${gapY + 10}" fill="#e88c8c" font-family="Inter,sans-serif" font-size="10" font-style="italic">the comma</text>`;
+
+  // start label
+  html += `<text x="${(xOct + xFifth) / 2}" y="${y0 + 22}" fill="#a8a294" font-family="JetBrains Mono,monospace" font-size="10" text-anchor="middle">START — same A</text>`;
+
+  svg.innerHTML = html;
+})();
+
+
+/* ============================================================
+   DEMO 7: Pure vs wolf fifth
+   ============================================================ */
+(function demo7() {
+  document.querySelectorAll('[data-pair]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const wasPlaying = btn.classList.contains('playing');
+      stopAll();
+      if (wasPlaying) return;
+      const F1 = 220;
+      // Wolf fifth in Pythagorean tuning: 262144/177147 ≈ 1.47981 (≈678 cents)
+      const wolfRatio = 262144 / 177147;
+      const F2 = btn.dataset.pair === 'pure' ? F1 * 1.5 : F1 * wolfRatio;
+      const harm = [1, 0.4, 0.25, 0.15, 0.08, 0.05];
+      const a = playTone(F1, 4, harm, { volume: 0.4 });
+      playTone(F2, 4, harm, { volume: 0.4 });
+      btn.classList.add('playing');
+      activeButtons.add(btn);
+      a.oscs[0]?.addEventListener('ended', () => {
+        btn.classList.remove('playing');
+        activeButtons.delete(btn);
+        updateStopButton();
+      }, { once: true });
+    });
+  });
+})();
+
+
+/* ============================================================
+   DEMO 8: Key tunes (well temperament suggestion)
+   ============================================================ */
+let currentLoop = null;
+(function demo8() {
+  const wrap = document.getElementById('key-tunes');
+
+  const keys = [
+    { name: 'C major',  baseFreq: 261.63, third_cents: 0,   mood: 'pure, calm — nearly just intonation' },
+    { name: 'D major',  baseFreq: 293.66, third_cents: 4,   mood: 'bright, triumphal — slightly tense' },
+    { name: 'E♭ major', baseFreq: 311.13, third_cents: -3,  mood: 'noble, slightly veiled — heroic' },
+    { name: 'F♯ major', baseFreq: 369.99, third_cents: 10,  mood: 'wide, restless — strange and sharp' },
+    { name: 'B minor',  baseFreq: 246.94, third_cents: -6,  minor: true, mood: 'patient sorrow, soft' },
+  ];
+
+  keys.forEach((k, idx) => {
+    const row = document.createElement('div');
+    row.className = 'key-row';
+    row.innerHTML = `
+      <button class="btn primary sm" data-key="${idx}">▶ ${k.name}</button>
+      <div class="key-mood">${k.mood}</div>
+      <div class="readout dim small mono" style="text-align:right;">3rd ${k.third_cents >= 0 ? '+' : ''}${k.third_cents}¢</div>
+    `;
+    wrap.appendChild(row);
+  });
+
+  function playKey(idx) {
+    const k = keys[idx];
+    const harm = [1, 0.5, 0.25, 0.12, 0.07];
+    const intervals = k.minor ? [0, 316, 702, 1200] : [0, 386, 702, 1200];
+    intervals[1] += k.third_cents;
+    const seq = [0, 1, 2, 3, 2, 1, 0];
+    const noteDur = 0.45;
+    ensureAudio();
+    seq.forEach((iv, i) => {
+      const freq = k.baseFreq * Math.pow(2, intervals[iv] / 1200);
+      playTone(freq, noteDur + 0.05, harm, {
+        startTime: audioCtx.currentTime + i * noteDur,
+        attack: 0.02, release: 0.1, volume: 0.4
+      });
+    });
+  }
+
+  wrap.addEventListener('click', e => {
+    const btn = e.target.closest('[data-key]');
+    if (!btn) return;
+    const wasPlaying = btn.classList.contains('playing');
+    stopAll();
+    if (wasPlaying) return;
+    btn.classList.add('playing');
+    activeButtons.add(btn);
+    playKey(parseInt(btn.dataset.key));
+    const totalDur = 0.45 * 7 + 0.3;
+    currentLoop = setTimeout(() => {
+      btn.classList.remove('playing');
+      activeButtons.delete(btn);
+      updateStopButton();
+      currentLoop = null;
+    }, totalDur * 1000);
+  });
+})();
+
+
+/* ============================================================
+   DEMO: Per-temperament bar charts (one per subsection)
+   ============================================================ */
+(function temperamentCharts() {
+  const fifthLabels = ['F', 'C', 'G', 'D', 'A', 'E', 'B', 'F♯', 'C♯', 'G♯', 'E♭', 'B♭'];
+  // Each label is the starting note of the fifth.
+  // Order around the circle: F→C, C→G, G→D, D→A, A→E, E→B, B→F♯, F♯→C♯, C♯→G♯, G♯→E♭, E♭→B♭, B♭→F
+  // Deviations are cents narrower than pure 3:2 (negative = narrowed, positive = widened, 0 = pure).
+
+  const systems = {
+    pythagorean: {
+      deviations: [0, 0, 0, 0, 0, 0, 0, 0, 0, -23.46, 0, 0],
+    },
+    meantone: {
+      deviations: [-5.377, -5.377, -5.377, -5.377, -5.377, -5.377, -5.377, -5.377, -5.377, +35.685, -5.377, -5.377],
+    },
+    werckmeister: {
+      deviations: [0, -5.865, -5.865, -5.865, 0, 0, -5.865, 0, 0, 0, 0, 0],
+    },
+    kirnberger: {
+      deviations: [0, -5.377, -5.377, -5.377, -5.377, 0, 0, -1.953, 0, 0, 0, 0],
+    },
+    vallotti: {
+      deviations: [-3.910, -3.910, -3.910, -3.910, -3.910, -3.910, 0, 0, 0, 0, 0, 0],
+    },
+    equal: {
+      deviations: [-1.955, -1.955, -1.955, -1.955, -1.955, -1.955, -1.955, -1.955, -1.955, -1.955, -1.955, -1.955],
+    },
+  };
+
+  const W = 640, H = 320;
+  const padL = 56, padR = 24, padTop = 24, padBottom = 72;
+  const chartW = W - padL - padR;
+  const chartH = H - padTop - padBottom;
+  const yMin = -28, yMax = 42;
+
+  function yFor(c) {
+    return padTop + ((yMax - c) / (yMax - yMin)) * chartH;
+  }
+
+  function renderChart(svgId, sysKey) {
+    const sys = systems[sysKey];
+    const svg = document.getElementById(svgId);
+    if (!svg) return;
+    const barW = (chartW / 12) * 0.72;
+    const barSpacing = chartW / 12;
+    const yZero = yFor(0);
+
+    let html = '';
+
+    // Gridlines and y-axis labels
+    [-20, -10, 0, 10, 20, 30, 40].forEach(c => {
+      const y = yFor(c);
+      const isZero = c === 0;
+      html += `<line x1="${padL}" y1="${y}" x2="${W - padR}" y2="${y}" stroke="${isZero ? '#4a5070' : '#2a2f44'}" stroke-width="${isZero ? 1.5 : 1}" ${isZero ? '' : 'stroke-dasharray="2,3"'}/>`;
+      html += `<text x="${padL - 8}" y="${y + 4}" fill="${isZero ? '#7ec4cf' : '#6b6759'}" font-family="JetBrains Mono,monospace" font-size="10" text-anchor="end">${isZero ? 'pure' : (c > 0 ? '+' : '') + c + '¢'}</text>`;
+    });
+
+    // Bars + labels
+    sys.deviations.forEach((d, i) => {
+      const x = padL + i * barSpacing + (barSpacing - barW) / 2;
+      const yPos = d >= 0 ? yFor(d) : yZero;
+      const heightPos = Math.max(d === 0 ? 0 : 2, Math.abs(yFor(d) - yZero));
+
+      let color;
+      const absD = Math.abs(d);
+      if (absD < 0.01) color = '#3a4060';
+      else if (d > 10) color = '#e88c8c';
+      else if (d < -15) color = '#e88c8c';
+      else color = '#e6b450';
+
+      const opacity = absD < 0.01 ? 0.35 : 0.9;
+
+      html += `<rect x="${x}" y="${yPos}" width="${barW}" height="${heightPos}" fill="${color}" opacity="${opacity}" rx="2"/>`;
+
+      const labelX = padL + i * barSpacing + barSpacing / 2;
+      const labelY = H - padBottom + 22;
+      html += `<text x="${labelX}" y="${labelY}" fill="#a8a294" font-family="Cormorant Garamond,serif" font-size="15" font-weight="600" text-anchor="middle">${fifthLabels[i]}</text>`;
+
+      if (absD > 0.01) {
+        const valY = d > 0 ? yFor(d) - 5 : yFor(d) + 12;
+        html += `<text x="${labelX}" y="${valY}" fill="${color}" font-family="JetBrains Mono,monospace" font-size="9" text-anchor="middle">${d > 0 ? '+' : ''}${d.toFixed(1)}</text>`;
+      } else {
+        const valY = yZero + 12;
+        html += `<text x="${labelX}" y="${valY}" fill="#6b6759" font-family="JetBrains Mono,monospace" font-size="9" text-anchor="middle">pure</text>`;
+      }
+    });
+
+    // Bottom axis caption
+    html += `<text x="${padL + chartW / 2}" y="${H - 12}" fill="#6b6759" font-family="Inter,sans-serif" font-size="10" text-anchor="middle" letter-spacing="0.15em">STARTING NOTE OF EACH FIFTH — AROUND THE CIRCLE OF FIFTHS →</text>`;
+
+    svg.innerHTML = html;
+  }
+
+  // Render all six charts, one for each subsection.
+  renderChart('chart-pythagorean',  'pythagorean');
+  renderChart('chart-meantone',     'meantone');
+  renderChart('chart-werckmeister', 'werckmeister');
+  renderChart('chart-kirnberger',   'kirnberger');
+  renderChart('chart-vallotti',     'vallotti');
+  renderChart('chart-equal',        'equal');
+})();
+
+
+/* ============================================================
+   DEMO 9: ET vs pure intervals
+   ============================================================ */
+(function demo9() {
+  const wrap = document.getElementById('et-rows');
+  const compares = [
+    { name: 'Perfect octave',  pure: [2, 1],  pureCents: 1200, et: 1200, diff: 0   },
+    { name: 'Perfect fifth',   pure: [3, 2],  pureCents: 702,  et: 700,  diff: -2  },
+    { name: 'Perfect fourth',  pure: [4, 3],  pureCents: 498,  et: 500,  diff: +2  },
+    { name: 'Major third',     pure: [5, 4],  pureCents: 386,  et: 400,  diff: +14 },
+    { name: 'Minor third',     pure: [6, 5],  pureCents: 316,  et: 300,  diff: -16 },
+  ];
+
+  const F1 = 220;
+  compares.forEach((c, i) => {
+    const row = document.createElement('div');
+    row.style.cssText = 'display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px; padding:10px 0; border-bottom:1px solid #2a2f44; align-items:center;';
+    row.innerHTML = `
+      <div>
+        <div style="font-family:'Cormorant Garamond', serif; font-size:18px;">${c.name}</div>
+        <div class="small dim">${c.diff === 0 ? 'identical' : (c.diff > 0 ? '+' : '') + c.diff + '¢ off'}</div>
+      </div>
+      <div class="row">
+        <button class="btn sm" data-et="${i}" data-mode="pure">▶ pure</button>
+        <span class="small dim mono">${c.pure[0]}:${c.pure[1]}</span>
+      </div>
+      <div class="row">
+        <button class="btn sm" data-et="${i}" data-mode="et">▶ equal</button>
+        <span class="small dim mono">${c.et}¢</span>
+      </div>
+    `;
+    wrap.appendChild(row);
+  });
+
+  wrap.addEventListener('click', e => {
+    const btn = e.target.closest('[data-et]');
+    if (!btn) return;
+    const wasPlaying = btn.classList.contains('playing');
+    stopAll();
+    if (wasPlaying) return;
+    const idx = parseInt(btn.dataset.et);
+    const mode = btn.dataset.mode;
+    const c = compares[idx];
+    const F2 = mode === 'pure'
+      ? F1 * c.pure[0] / c.pure[1]
+      : F1 * Math.pow(2, c.et / 1200);
+    const harm = [1, 0.45, 0.22, 0.12, 0.06];
+    const a = playTone(F1, 2.8, harm, { volume: 0.4 });
+    playTone(F2, 2.8, harm, { volume: 0.4 });
+    btn.classList.add('playing');
+    activeButtons.add(btn);
+    a.oscs[0]?.addEventListener('ended', () => {
+      btn.classList.remove('playing');
+      activeButtons.delete(btn);
+      updateStopButton();
+    }, { once: true });
+  });
+})();
+
+
+/* ============================================================
+   DEMO 10: Familiar songs in just vs equal temperament
+   ============================================================ */
+(function demo10() {
+  const wrap = document.getElementById('songs-list');
+  const droneCheck = document.getElementById('drone-check');
+
+  // scale degree → cents above tonic
+  const tunings = {
+    just:  [0, 204, 386, 498, 702, 884, 1088], // 1/1, 9/8, 5/4, 4/3, 3/2, 5/3, 15/8
+    equal: [0, 200, 400, 500, 700, 900, 1100],
+  };
+
+  // melodies as { degree (0..N), duration (in beats) }
+  // degree 0=tonic, 1=2nd, 2=3rd, 3=4th, 4=5th, 5=6th, 6=7th, 7=octave...
+  const songs = [
+    {
+      title: 'Twinkle, Twinkle, Little Star',
+      sub: 'C C G G A A G  F F E E D D C',
+      notes: [
+        [0,1],[0,1],[4,1],[4,1],[5,1],[5,1],[4,2],
+        [3,1],[3,1],[2,1],[2,1],[1,1],[1,1],[0,2]
+      ],
+    },
+    {
+      title: 'Ode to Joy',
+      sub: 'E E F G G F E D C C D E E. D D.',
+      notes: [
+        [2,1],[2,1],[3,1],[4,1],
+        [4,1],[3,1],[2,1],[1,1],
+        [0,1],[0,1],[1,1],[2,1],
+        [2,1.5],[1,0.5],[1,2]
+      ],
+    },
+    {
+      title: 'Frère Jacques',
+      sub: 'C D E C  C D E C  E F G  E F G',
+      notes: [
+        [0,1],[1,1],[2,1],[0,1],
+        [0,1],[1,1],[2,1],[0,1],
+        [2,1],[3,1],[4,2],
+        [2,1],[3,1],[4,2]
+      ],
+    },
+  ];
+
+  const tonicHz = 261.63; // C4
+  const beatMs = 380;
+  const harm = [1, 0.45, 0.22, 0.12, 0.06];
+
+  let activeSongBtn = null;
+  let songTimeout = null;
+  let droneTone = null;
+
+  function startDrone() {
+    if (droneTone) return;
+    droneTone = makeSustainedTone(tonicHz / 2, [1, 0.3, 0.15, 0.08], { volume: 0.18 });
+  }
+  function stopDrone() {
+    if (!droneTone) return;
+    droneTone.stop();
+    droneTone = null;
+  }
+
+  function playSong(songIdx, tuningName) {
+    const song = songs[songIdx];
+    const tuning = tunings[tuningName];
+    ensureAudio();
+    const startT = audioCtx.currentTime + 0.05;
+    let t = 0;
+    song.notes.forEach(([deg, dur]) => {
+      const oct = Math.floor(deg / 7);
+      const within = ((deg % 7) + 7) % 7;
+      const cents = tuning[within] + oct * 1200;
+      const freq = tonicHz * Math.pow(2, cents / 1200);
+      const noteSec = (dur * beatMs) / 1000;
+      playTone(freq, noteSec * 0.95, harm, {
+        startTime: startT + t,
+        volume: 0.42,
+        attack: 0.02,
+        release: Math.min(0.15, noteSec * 0.4),
+      });
+      t += noteSec;
+    });
+    return t * 1000;
+  }
+
+  songs.forEach((s, idx) => {
+    const row = document.createElement('div');
+    row.className = 'song-row';
+    row.innerHTML = `
+      <div>
+        <div class="song-title">${s.title}</div>
+        <div class="song-sub mono">${s.sub}</div>
+      </div>
+      <button class="btn primary song-btn" data-song="${idx}" data-mode="just">▶ just</button>
+      <button class="btn primary song-btn" data-song="${idx}" data-mode="equal">▶ equal</button>
+    `;
+    wrap.appendChild(row);
+  });
+
+  function clearActiveSong() {
+    if (activeSongBtn) {
+      activeSongBtn.classList.remove('playing');
+      activeButtons.delete(activeSongBtn);
+      activeSongBtn = null;
+    }
+    if (songTimeout) { clearTimeout(songTimeout); songTimeout = null; }
+    updateStopButton();
+  }
+
+  wrap.addEventListener('click', e => {
+    const btn = e.target.closest('[data-song]');
+    if (!btn) return;
+    const wasPlaying = btn === activeSongBtn;
+    stopAll();
+    if (wasPlaying) return;
+
+    // restore drone if checkbox is on (stopAll killed it)
+    if (droneCheck.checked) startDrone();
+
+    const dur = playSong(parseInt(btn.dataset.song), btn.dataset.mode);
+    btn.classList.add('playing');
+    activeButtons.add(btn);
+    activeSongBtn = btn;
+    updateStopButton();
+    songTimeout = setTimeout(clearActiveSong, dur + 200);
+  });
+
+  droneCheck.addEventListener('change', () => {
+    if (droneCheck.checked) startDrone();
+    else stopDrone();
+  });
+
+  stopHandlers.add(() => {
+    clearActiveSong();
+    stopDrone();
+    // also uncheck so it doesn't reappear next click — actually leave it checked,
+    // but the drone will restart on next song play
+  });
+})();
+
+
+/* ============================================================
+   DEMO 11: Synesthesia keyboard
+   ============================================================ */
+(function demo11() {
+  const wrap = document.getElementById('syn-keys');
+  const notes = [
+    { name: 'C',  freq: 261.63, color: '#e74c3c' },
+    { name: 'C♯', freq: 277.18, color: '#8e44ad' },
+    { name: 'D',  freq: 293.66, color: '#f1c40f' },
+    { name: 'E♭', freq: 311.13, color: '#95a5a6' },
+    { name: 'E',  freq: 329.63, color: '#dfe6e9' },
+    { name: 'F',  freq: 349.23, color: '#8b0000' },
+    { name: 'F♯', freq: 369.99, color: '#3498db' },
+    { name: 'G',  freq: 392.00, color: '#e67e22' },
+    { name: 'A♭', freq: 415.30, color: '#6c5ce7' },
+    { name: 'A',  freq: 440.00, color: '#27ae60' },
+    { name: 'B♭', freq: 466.16, color: '#d29bbf' },
+    { name: 'B',  freq: 493.88, color: '#74b9ff' },
+  ];
+
+  notes.forEach(n => {
+    const k = document.createElement('div');
+    k.className = 'syn-key';
+    k.innerHTML = `<div class="color-fill" style="background:${n.color};"></div><span>${n.name}</span>`;
+    k.addEventListener('mousedown', () => start(k, n));
+    k.addEventListener('mouseup', () => stop(k));
+    k.addEventListener('mouseleave', () => stop(k));
+    k.addEventListener('touchstart', e => { e.preventDefault(); start(k, n); });
+    k.addEventListener('touchend', e => { e.preventDefault(); stop(k); });
+    wrap.appendChild(k);
+  });
+
+  const active = new Map();
+  function start(k, n) {
+    if (active.has(k)) return;
+    const t = makeSustainedTone(n.freq, [1, 0.4, 0.2, 0.1, 0.05], { volume: 0.3 });
+    active.set(k, t);
+    k.classList.add('lit');
+    activeButtons.add(k);
+    updateStopButton();
+  }
+  function stop(k) {
+    const t = active.get(k);
+    if (!t) return;
+    t.stop();
+    active.delete(k);
+    setTimeout(() => k.classList.remove('lit'), 600);
+    activeButtons.delete(k);
+    updateStopButton();
+  }
+  stopHandlers.add(() => {
+    active.forEach((t, k) => { t.stop(); k.classList.remove('lit'); });
+    active.clear();
+  });
+})();
+
+
+/* ============================================================
+   SCROLL PROGRESS
+   ============================================================ */
+const progressEl = document.getElementById('progress');
+window.addEventListener('scroll', () => {
+  const h = document.documentElement;
+  const max = h.scrollHeight - h.clientHeight;
+  const p = max > 0 ? (h.scrollTop / max) * 100 : 0;
+  progressEl.style.width = p + '%';
+}, { passive: true });
+
+</script>
+
+</body>
+</html>
